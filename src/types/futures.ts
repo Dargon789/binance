@@ -53,6 +53,7 @@ export interface SymbolKlinePaginatedParams {
 
 export interface FuturesDataPaginatedParams {
   symbol: string;
+  contractType?: string;
   period: '5m' | '15m' | '30m' | '1h' | '2h' | '4h' | '6h' | '12h' | '1d';
   limit?: number;
   startTime?: number;
@@ -147,6 +148,7 @@ export interface ModifyFuturesOrderParams<numberType = number> {
   side: OrderSide;
   quantity?: numberType;
   price?: numberType;
+  priceMatch?: PriceMatchMode;
 }
 
 export enum EnumPositionMarginChangeType {
@@ -356,7 +358,7 @@ export interface AggregateFuturesTrade {
   f: number;
   l: number;
   T: number;
-  M: boolean;
+  m: boolean;
 }
 
 export interface MarkPrice {
@@ -475,6 +477,7 @@ export interface OrderResult {
   priceProtect: boolean;
   selfTradePreventionMode: SelfTradePreventionMode;
   priceMatch: PriceMatchMode;
+  goodTillDate: number;
 }
 
 export interface ModifyFuturesOrderResult {
@@ -833,7 +836,7 @@ export interface OrderAmendment {
 
 export interface QuarterlyContractSettlementPrice {
   deliveryTime: number;
-  deliveryPrice: string;
+  deliveryPrice: number;
 }
 
 export interface BasisParams {
@@ -859,12 +862,23 @@ export interface Basis {
 export interface IndexPriceConstituent {
   exchange: string;
   symbol: string;
+  price: numberInString;
+  weight: numberInString;
 }
 
 export interface IndexPriceConstituents {
   symbol: string;
   time: number;
   constituents: IndexPriceConstituent[];
+}
+
+export interface InsuranceFundBalance {
+  symbols: string[];
+  assets: {
+    asset: string;
+    marginBalance: string;
+    updateTime: number;
+  }[];
 }
 
 export interface ModifyOrderParams {
@@ -894,8 +908,6 @@ export interface GetFuturesOrderModifyHistoryParams {
   startTime?: number;
   endTime?: number;
   limit?: number;
-  recvWindow?: number;
-  timestamp: number;
 }
 
 export interface FuturesTradeHistoryDownloadId {

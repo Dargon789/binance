@@ -232,14 +232,15 @@ export enum EnumDepositStatus {
 export type DepositStatusCode = `${EnumDepositStatus}`;
 
 export interface DepositHistoryParams {
-  coin?: string;
-  status?: DepositStatusCode;
-  startTime?: number;
-  endTime?: number;
-  offset?: number;
-  limit?: number;
+  coin?: string; // Optional: Filter by coin
+  status?: DepositStatusCode; // Optional: Filter by status (0:pending, 6:credited but cannot withdraw, 7:Wrong Deposit, 8:Waiting User confirm, 1:success, 2:rejected)
+  startTime?: number; // Optional: Start time in milliseconds (Default: 90 days from current timestamp)
+  endTime?: number; // Optional: End time in milliseconds (Default: present timestamp)
+  offset?: number; // Optional: Pagination offset (Default: 0)
+  limit?: number; // Optional: Number of records to return (Default: 1000, Max: 1000)
+  txId?: string; // Optional: Filter by transaction ID
+  includeSource?: boolean; // Optional: Return sourceAddress field when set to true (Default: false)
 }
-
 export interface DepositHistory {
   amount: numberInString;
   coin: string;
@@ -266,13 +267,14 @@ export enum EnumWithdrawStatus {
 export type WithdrawStatusCode = `${EnumWithdrawStatus}`;
 
 export interface WithdrawHistoryParams {
-  coin?: string;
-  withdrawOrderId?: string;
-  status?: WithdrawStatusCode;
-  offset?: number;
-  limit?: number;
-  startTime?: number;
-  endTime?: number;
+  coin?: string; // Optional: Filter by coin
+  withdrawOrderId?: string; // Optional: Filter by withdraw order ID
+  status?: WithdrawStatusCode; // Optional: Filter by status (0:Email Sent, 2:Awaiting Approval, 3:Rejected, 4:Processing, 6:Completed)
+  offset?: number; // Optional: Pagination offset
+  limit?: number; // Optional: Number of records to return (Default: 1000, Max: 1000)
+  idList?: string; // Optional: Comma-separated list of withdrawal IDs
+  startTime?: number; // Optional: Start time in milliseconds (Default: 90 days from current timestamp)
+  endTime?: number; // Optional: End time in milliseconds (Default: present timestamp)
 }
 
 export enum EnumWithdrawTransferType {
@@ -299,6 +301,7 @@ export interface WithdrawHistory {
 export interface DepositAddressParams {
   coin: string;
   network?: string;
+  amount?: number;
 }
 
 export interface DepositAddressResponse {
@@ -310,6 +313,7 @@ export interface DepositAddressResponse {
 
 export interface ConvertDustParams {
   asset: string[];
+  accountType?: 'SPOT' | 'MARGIN';
 }
 
 export interface DustInfoDetail {
@@ -462,7 +466,6 @@ export interface ReplaceSpotOrderParams<
 
 export interface GetOCOParams {
   symbol?: string;
-  isIsolated?: StringBoolean;
   orderListId?: number;
   origClientOrderId?: string;
 }
@@ -609,6 +612,7 @@ export interface AggregateTrade {
 export interface CurrentAvgPrice {
   mins: number;
   price: numberInString;
+  closeTime: number;
 }
 
 export interface DailyChangeStatistic {
@@ -797,7 +801,6 @@ export interface CancelSpotOrderResult {
   timeInForce: OrderTimeInForce;
   type: OrderType;
   side: OrderSide;
-  isIsolated?: boolean;
   selfTradePreventionMode: SelfTradePreventionMode;
 }
 
@@ -880,7 +883,43 @@ export interface SpotOrder {
   updateTime: number;
   isWorking: boolean;
   origQuoteOrderQty: numberInString;
-  isIsolated?: boolean;
+  selfTradePreventionMode: SelfTradePreventionMode;
+}
+
+export interface SpotAmendKeepPriority {
+  transactTime: number;
+  executionId: number;
+  amendedOrder: {
+    symbol: string;
+    orderId: number;
+    orderListId: number;
+    origClientOrderId: string;
+    clientOrderId: string;
+    price: string;
+    qty: string;
+    executedQty: string;
+    preventedQty: string;
+    quoteOrderQty: string;
+    cumulativeQuoteQty: string;
+    status: string;
+    timeInForce: string;
+    type: string;
+    side: string;
+    workingTime: number;
+    selfTradePreventionMode: string;
+  };
+  listStatus?: {
+    orderListId: number;
+    contingencyType: string;
+    listOrderStatus: string;
+    listClientOrderId: string;
+    symbol: string;
+    orders: {
+      symbol: string;
+      orderId: number;
+      clientOrderId: string;
+    }[];
+  };
 }
 
 export interface SpotAssetBalance {
@@ -894,13 +933,22 @@ export interface AccountInformation {
   takerCommission: number;
   buyerCommission: number;
   sellerCommission: number;
+  commissionRates: {
+    maker: string;
+    taker: string;
+    buyer: string;
+    seller: string;
+  };
   canTrade: boolean;
   canWithdraw: boolean;
   canDeposit: boolean;
+  brokered: boolean;
+  requireSelfTradePrevention: boolean;
+  preventSor: boolean;
   updateTime: number;
   accoountType: string;
   balances: SpotAssetBalance[];
-  permissions: any[];
+  permissions: string[];
   uid: number;
 }
 
@@ -989,13 +1037,18 @@ export interface MarginAccountRecord {
 }
 
 export interface QueryCrossMarginAccountDetailsParams {
+  created: boolean;
   borrowEnabled: boolean;
   marginLevel: numberInString;
   totalAssetOfBtc: numberInString;
   totalLiabilityOfBtc: numberInString;
   totalNetAssetOfBtc: numberInString;
+  totalCollateralValueInUSDT: numberInString;
+  totalOpenOrderLossInUSDT: numberInString;
   tradeEnabled: boolean;
-  transferEnabled: boolean;
+  transferInEnabled: boolean;
+  transferOutEnabled: boolean;
+  accountType: string;
   userAssets: MarginBalance[];
 }
 
@@ -1560,8 +1613,51 @@ export interface SubAccountUniversalTransferParams {
   amount: number;
 }
 
+export interface SubAccountMovePositionParams {
+  fromUserEmail: string;
+  toUserEmail: string;
+  productType: string;
+  orderArgs: {
+    symbol: string;
+    quantity: number;
+    positionSide: 'BOTH' | 'LONG' | 'SHORT';
+  }[];
+}
 export interface SubAccountUniversalTransfer extends SubAccountTransfer {
   clientTranId?: string;
+}
+
+export interface SubAccountMovePosition {
+  fromUserEmail: string;
+  toUserEmail: string;
+  productType: string;
+  symbol: string;
+  priceType: string;
+  price: string;
+  quantity: string;
+  positionSide: string;
+  side: string;
+  success: boolean;
+}
+
+export interface SubAccountMovePositionHistoryParams {
+  symbol: string;
+  startTime?: number;
+  endTime?: number;
+  page: number;
+  row: number;
+}
+
+export interface SubAccountMovePositionHistory {
+  fromUserEmail: string;
+  toUserEmail: string;
+  productType: string;
+  symbol: string;
+  price: string;
+  quantity: string;
+  positionSide: string;
+  side: string;
+  timeStamp: number;
 }
 
 export interface SubAccountUniversalTransferHistoryParams {
@@ -2058,7 +2154,6 @@ export interface SubmitDepositCreditResponse {
 export interface DepositAddressListParams {
   coin: string;
   network?: string;
-  timestamp: number;
 }
 
 export interface DepositAddress {
@@ -2297,6 +2392,47 @@ export interface UIKlinesParams {
   limit?: number;
 }
 
+export interface Ticker24hrFull {
+  symbol: string;
+  priceChange: string;
+  priceChangePercent: string;
+  weightedAvgPrice: string;
+  prevClosePrice: string;
+  lastPrice: string;
+  lastQty: string;
+  bidPrice: string;
+  bidQty: string;
+  askPrice: string;
+  askQty: string;
+  openPrice: string;
+  highPrice: string;
+  lowPrice: string;
+  volume: string;
+  quoteVolume: string;
+  openTime: number;
+  closeTime: number;
+  firstId: number;
+  lastId: number;
+  count: number;
+}
+
+export interface Ticker24hrMini {
+  symbol: string;
+  openPrice: string;
+  highPrice: string;
+  lowPrice: string;
+  lastPrice: string;
+  volume: string;
+  quoteVolume: string;
+  openTime: number;
+  closeTime: number;
+  firstId: number;
+  lastId: number;
+  count: number;
+}
+
+export type Ticker24hrResponse = Ticker24hrFull | Ticker24hrMini;
+
 export interface TradingDayTickerParams {
   symbol?: string;
   symbols?: string[];
@@ -2304,7 +2440,7 @@ export interface TradingDayTickerParams {
   type?: 'FULL' | 'MINI';
 }
 
-export type TradingDayTickerFull = {
+export interface TradingDayTickerFull {
   symbol: string;
   priceChange: string;
   priceChangePercent: string;
@@ -2320,7 +2456,7 @@ export type TradingDayTickerFull = {
   firstId: number;
   lastId: number;
   count: number;
-};
+}
 
 export interface TradingDayTickerMini {
   symbol: string;
@@ -2336,6 +2472,14 @@ export interface TradingDayTickerMini {
   lastId: number;
   count: number;
 }
+
+export type TradingDayTickerSingle =
+  | TradingDayTickerFull
+  | TradingDayTickerMini;
+
+export type TradingDayTickerArray =
+  | TradingDayTickerFull[]
+  | TradingDayTickerMini[];
 
 export interface RollingWindowTickerParams {
   symbol?: string;
@@ -2492,9 +2636,10 @@ export interface PreventedMatch {
   symbol: string;
   preventedMatchId: number;
   takerOrderId: number;
+  makerSymbol: string;
   makerOrderId: number;
   tradeGroupId: number;
-  selfTradePreventionMode: string;
+  selfTradePreventionMode: SelfTradePreventionMode;
   price: string;
   makerPreventedQuantity: string;
   transactTime: number;
@@ -2507,6 +2652,23 @@ export interface AllocationsParams {
   fromAllocationId?: number;
   limit?: number;
   orderId?: number;
+}
+
+export interface Allocation {
+  symbol: string;
+  allocationId: number;
+  allocationType: string;
+  orderId: number;
+  orderListId: number;
+  price: string;
+  qty: string;
+  quoteQty: string;
+  commission: string;
+  commissionAsset: string;
+  time: number;
+  isBuyer: boolean;
+  isMaker: boolean;
+  isAllocator: boolean;
 }
 
 export interface CommissionRates {
@@ -2926,6 +3088,7 @@ export interface GetLockedRewardsHistory {
   asset: string;
   lockPeriod: string;
   amount: string;
+  type: string;
 }
 
 export interface SetAutoSubscribeParams {
@@ -2964,6 +3127,8 @@ export interface LockedSubscriptionPreview {
   rewardsEndDate: string;
   deliverDate: string;
   nextSubscriptionDate: string;
+  boostRewardAsset: string;
+  estDailyRewardAmt: string;
 }
 
 export interface GetRateHistoryParams {
@@ -4912,6 +5077,9 @@ export interface SimpleEarnLockedProduct {
     subscriptionStartTime: number;
     extraRewardAsset: string;
     extraRewardAPR: string;
+    boostRewardAsset: string;
+    boostApr: string;
+    boostEndTime: string;
   };
   quota: {
     totalPersonalQuota: string;
@@ -4977,6 +5145,9 @@ export interface SimpleEarnLockedProductPosition {
   isRenewable: boolean;
   isAutoRenew: boolean;
   redeemDate: string;
+  boostRewardAsset: string;
+  boostApr: string;
+  totalBoostRewardAmt: string;
 }
 
 export interface SimpleEarnAccountResponse {
@@ -5196,7 +5367,7 @@ export interface SubmitMarginOTOOrderParams {
   isIsolated?: 'TRUE' | 'FALSE';
   listClientOrderId?: string;
   newOrderRespType?: 'ACK' | 'RESULT' | 'FULL';
-  sideEffectType?: 'NO_SIDE_EFFECT' | 'MARGIN_BUY';
+  sideEffectType?: SideEffects;
   selfTradePreventionMode?:
     | 'EXPIRE_TAKER'
     | 'EXPIRE_MAKER'
@@ -5256,7 +5427,7 @@ export interface MarginOTOOrder {
 export interface SubmitMarginOTOCOOrderParams {
   symbol: string;
   isIsolated?: 'TRUE' | 'FALSE';
-  sideEffectType?: 'NO_SIDE_EFFECT' | 'MARGIN_BUY';
+  sideEffectType?: SideEffects;
   autoRepayAtCancel?: boolean;
   listClientOrderId?: string;
   newOrderRespType?: 'ACK' | 'RESULT' | 'FULL';
@@ -5544,6 +5715,12 @@ export interface PMProRedeemBFUSDResponse {
   fromAssetQty: number;
   targetAssetQty: number;
   rate: number;
+}
+
+export interface PMProBankruptcyLoanRepaymentHistory {
+  asset: string;
+  amount: string;
+  repayTime: number;
 }
 
 export interface VipLoanInterestRateHistoryParams {

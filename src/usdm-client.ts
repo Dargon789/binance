@@ -37,6 +37,7 @@ import {
   IncomeHistory,
   IndexPriceConstituents,
   IndexPriceKlinesParams,
+  InsuranceFundBalance,
   MarkPrice,
   ModeChangeResult,
   ModifyFuturesOrderParams,
@@ -176,13 +177,11 @@ export class USDMClient extends BaseRestClient {
     return this.get('fapi/v1/premiumIndexKlines', params);
   }
 
-  getMarkPrice(params: BasicSymbolParam): Promise<MarkPrice>;
+  getMarkPrice(params: { symbol: string }): Promise<MarkPrice>;
 
   getMarkPrice(): Promise<MarkPrice[]>;
 
-  getMarkPrice(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<MarkPrice | MarkPrice[]> {
+  getMarkPrice(params?: { symbol?: string }): Promise<MarkPrice | MarkPrice[]> {
     return this.get('fapi/v1/premiumIndex', params);
   }
 
@@ -202,42 +201,48 @@ export class USDMClient extends BaseRestClient {
   get24hrChangeStatististics(
     params?: Partial<BasicSymbolParam>,
   ): Promise<ChangeStats24hr | ChangeStats24hr[]> {
-    return this.get24hrChangeStatistics(params);
-  }
-
-  get24hrChangeStatistics(
-    params: Partial<BasicSymbolParam>,
-  ): Promise<ChangeStats24hr[]>;
-
-  get24hrChangeStatistics(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<ChangeStats24hr | ChangeStats24hr[]>;
-
-  get24hrChangeStatistics(
-    params: Partial<BasicSymbolParam>,
-  ): Promise<ChangeStats24hr>;
-
-  get24hrChangeStatistics(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<ChangeStats24hr | ChangeStats24hr[]> {
     return this.get('fapi/v1/ticker/24hr', params);
   }
 
-  getSymbolPriceTicker(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<SymbolPrice | SymbolPrice[]> {
+  get24hrChangeStatistics(params: { symbol: string }): Promise<ChangeStats24hr>;
+
+  get24hrChangeStatistics(): Promise<ChangeStats24hr[]>;
+
+  get24hrChangeStatistics(params?: {
+    symbol?: string;
+  }): Promise<ChangeStats24hr | ChangeStats24hr[]> {
+    return this.get('fapi/v1/ticker/24hr', params);
+  }
+
+  getSymbolPriceTicker(params: { symbol: string }): Promise<SymbolPrice>;
+
+  getSymbolPriceTicker(): Promise<SymbolPrice[]>;
+
+  getSymbolPriceTicker(params?: {
+    symbol?: string;
+  }): Promise<SymbolPrice | SymbolPrice[]> {
     return this.get('fapi/v1/ticker/price', params);
   }
 
-  getSymbolPriceTickerV2(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<SymbolPrice | SymbolPrice[]> {
+  getSymbolPriceTickerV2(params: { symbol: string }): Promise<SymbolPrice>;
+
+  getSymbolPriceTickerV2(): Promise<SymbolPrice[]>;
+
+  getSymbolPriceTickerV2(params?: {
+    symbol?: string;
+  }): Promise<SymbolPrice | SymbolPrice[]> {
     return this.get('fapi/v2/ticker/price', params);
   }
 
-  getSymbolOrderBookTicker(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<FuturesSymbolOrderBookTicker | FuturesSymbolOrderBookTicker[]> {
+  getSymbolOrderBookTicker(params: {
+    symbol: string;
+  }): Promise<FuturesSymbolOrderBookTicker>;
+
+  getSymbolOrderBookTicker(): Promise<FuturesSymbolOrderBookTicker[]>;
+
+  getSymbolOrderBookTicker(params?: {
+    symbol?: string;
+  }): Promise<FuturesSymbolOrderBookTicker | FuturesSymbolOrderBookTicker[]> {
     return this.get('fapi/v1/ticker/bookTicker', params);
   }
 
@@ -247,7 +252,7 @@ export class USDMClient extends BaseRestClient {
     return this.get('futures/data/delivery-price', params);
   }
 
-  getOpenInterest(params: BasicSymbolParam): Promise<OpenInterest> {
+  getOpenInterest(params: { symbol: string }): Promise<OpenInterest> {
     return this.get('fapi/v1/openInterest', params);
   }
 
@@ -283,7 +288,7 @@ export class USDMClient extends BaseRestClient {
     return this.get('fapi/v1/lvtKlines', params);
   }
 
-  getCompositeSymbolIndex(params?: Partial<BasicSymbolParam>): Promise<any> {
+  getCompositeSymbolIndex(params?: { symbol?: string }): Promise<any> {
     return this.get('fapi/v1/indexInfo', params);
   }
 
@@ -298,13 +303,16 @@ export class USDMClient extends BaseRestClient {
     return this.get('futures/data/basis', params);
   }
 
-  /**
-   * Possibly @deprecated, found only in old docs
-   **/
   getIndexPriceConstituents(params: {
     symbol: string;
   }): Promise<IndexPriceConstituents> {
     return this.get('fapi/v1/constituents', params);
+  }
+
+  getInsuranceFundBalance(params?: {
+    symbol?: string;
+  }): Promise<InsuranceFundBalance | InsuranceFundBalance[]> {
+    return this.get('fapi/v1/insuranceBalance', params);
   }
 
   /**
@@ -419,7 +427,7 @@ export class USDMClient extends BaseRestClient {
     return this.getPrivate('fapi/v1/allOrders', params);
   }
 
-  getAllOpenOrders(params?: Partial<BasicSymbolParam>): Promise<OrderResult[]> {
+  getAllOpenOrders(params?: { symbol?: string }): Promise<OrderResult[]> {
     return this.getPrivate('fapi/v1/openOrders', params);
   }
 
@@ -473,7 +481,7 @@ export class USDMClient extends BaseRestClient {
     return this.getPrivate('fapi/v3/positionRisk', params);
   }
 
-  getADLQuantileEstimation(params?: Partial<BasicSymbolParam>): Promise<any> {
+  getADLQuantileEstimation(params?: { symbol?: string }): Promise<any> {
     return this.getPrivate('fapi/v1/adlQuantile', params);
   }
 
@@ -522,9 +530,9 @@ export class USDMClient extends BaseRestClient {
     return this.getPrivate('fapi/v1/commissionRate', params);
   }
 
-  getAccountCommissionRate(
-    params: BasicSymbolParam,
-  ): Promise<UserCommissionRate> {
+  getAccountCommissionRate(params: {
+    symbol: string;
+  }): Promise<UserCommissionRate> {
     return this.getPrivate('fapi/v1/commissionRate', params);
   }
 
@@ -543,9 +551,9 @@ export class USDMClient extends BaseRestClient {
   /**
    * Contrary to what the docs say - if symbol is provided, this returns an array with length 1 (assuming the symbol exists)
    */
-  getNotionalAndLeverageBrackets(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<SymbolLeverageBracketsResult[]> {
+  getNotionalAndLeverageBrackets(params?: {
+    symbol?: string;
+  }): Promise<SymbolLeverageBracketsResult[]> {
     return this.getPrivate('fapi/v1/leverageBracket', params);
   }
 
@@ -561,9 +569,9 @@ export class USDMClient extends BaseRestClient {
     return this.getPrivate('fapi/v1/income', params);
   }
 
-  getApiQuantitativeRulesIndicators(
-    params?: Partial<BasicSymbolParam>,
-  ): Promise<any> {
+  getApiQuantitativeRulesIndicators(params?: {
+    symbol?: string;
+  }): Promise<any> {
     return this.getPrivate('fapi/v1/apiTradingStatus', params);
   }
 
