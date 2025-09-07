@@ -37,7 +37,7 @@
     "axios": "^1.8.4",
     "isomorphic-ws": "^4.0.1",
     "nanoid": "^5.1.5",
-    "ws": "^7.4.0"
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/jest": "^29.1.1",
