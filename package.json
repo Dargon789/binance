@@ -50,7 +50,7 @@
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "jest": "^30.0.0",
     "ts-jest": "^29.4.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.2"
   },
   "optionalDependencies": {
     "source-map-loader": "^2.0.0",
