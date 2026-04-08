@@ -871,6 +871,18 @@ export abstract class BaseWebsocketClient<
     return subscribeRequestEvents;
   }
 
+  private getMidflightRequestCacheBucket(wsKey: TWSKey): Record<string, MidflightWsRequestEvent> {
+    if (!this.midflightRequestCache) {
+      this.midflightRequestCache = Object.create(null);
+    }
+
+    if (!this.midflightRequestCache[wsKey]) {
+      this.midflightRequestCache[wsKey] = Object.create(null);
+    }
+
+    return this.midflightRequestCache[wsKey];
+  }
+
   /**
    * Simply builds and sends subscribe events for a list of topics for a ws key
    *
@@ -912,13 +924,10 @@ export abstract class BaseWebsocketClient<
     for (const midflightRequest of subscribeWsMessages) {
       const wsMessage = midflightRequest.requestEvent;
 
-      if (!this.midflightRequestCache[wsKey]) {
-        this.midflightRequestCache[wsKey] = Object.create(null);
-      }
+      const wsBucket = this.getMidflightRequestCacheBucket(wsKey);
 
       // Cache the request for this call, so we can enrich the response with request info
-      this.midflightRequestCache[wsKey][midflightRequest.requestKey] =
-        midflightRequest.requestEvent;
+      wsBucket[midflightRequest.requestKey] = midflightRequest.requestEvent;
 
       this.logger.trace(
         `Sending batch via message: "${JSON.stringify(wsMessage)}", cached with key "${midflightRequest.requestKey}"`,
@@ -928,7 +937,8 @@ export abstract class BaseWebsocketClient<
         this.tryWsSend(wsKey, JSON.stringify(wsMessage), true);
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
-        delete this.midflightRequestCache[wsKey][midflightRequest.requestKey];
+        const errorBucket = this.getMidflightRequestCacheBucket(wsKey);
+        delete errorBucket[midflightRequest.requestKey];
       }
     }
 
