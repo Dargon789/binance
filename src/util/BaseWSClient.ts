@@ -913,7 +913,7 @@ export abstract class BaseWebsocketClient<
       const wsMessage = midflightRequest.requestEvent;
 
       if (!this.midflightRequestCache[wsKey]) {
-        this.midflightRequestCache[wsKey] = {};
+        this.midflightRequestCache[wsKey] = Object.create(null);
       }
 
       // Cache the request for this call, so we can enrich the response with request info
