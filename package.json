@@ -34,7 +34,7 @@
     "0xSmartCrypto <0xsmartcrypto@gmail.com> (https://twitter.com/0xSmartCrypto)"
   ],
   "dependencies": {
-    "axios": "^1.8.4",
+    "axios": "^1.13.5",
     "isomorphic-ws": "^4.0.1",
     "nanoid": "^5.1.5",
     "ws": "^7.4.0"
@@ -55,7 +55,7 @@
   "optionalDependencies": {
     "source-map-loader": "^2.0.0",
     "ts-loader": "^8.0.11",
-    "webpack": "^5.97.1",
+    "webpack": "^5.104.1",
     "webpack-cli": "^5.1.4"
   },
   "keywords": [
