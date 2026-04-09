@@ -24,7 +24,8 @@ import {
   const key = process.env.API_KEY_COM || 'APIKEY';
   const secret = process.env.API_SECRET_COM || 'APISECRET';
 
-  console.log({ key, secret });
+  // Do not log API key/secret contents to avoid exposing sensitive data in logs.
+  console.log({ hasKey: !!key, hasSecret: !!secret });
 
   const ignoredTraceLogMsgs = [
     'Sending ping',
