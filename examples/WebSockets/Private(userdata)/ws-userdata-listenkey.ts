@@ -24,7 +24,10 @@ import {
   const key = process.env.API_KEY_COM || 'APIKEY';
   const secret = process.env.API_SECRET_COM || 'APISECRET';
 
-  console.log({ key, secret });
+  console.log({
+    keyConfigured: key !== 'APIKEY',
+    secretConfigured: secret !== 'APISECRET',
+  });
 
   const ignoredTraceLogMsgs = [
     'Sending ping',
