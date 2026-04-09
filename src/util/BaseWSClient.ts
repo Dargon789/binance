@@ -990,7 +990,7 @@ export abstract class BaseWebsocketClient<
     requestKey: string,
   ): TWSRequestEvent | undefined {
     if (!this.midflightRequestCache[wsKey]) {
-      this.midflightRequestCache[wsKey] = {};
+      this.midflightRequestCache[wsKey] = Object.create(null);
     }
     return this.midflightRequestCache[wsKey][requestKey];
   }

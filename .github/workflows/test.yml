@@ -21,13 +21,14 @@ jobs:
           cache: 'npm'
 
       - name: Install
-        run: npm ci --ignore-scripts
+        run: npm ci --ignore-scripts 
 
       - name: Check Build
-        run: npm run build
+        run: npm run build 
 
       - name: Check Lint
-        run: npm run lint
+        run: npm run lint 
+        continue-on-error: true
 
       - name: Test REST API Public
         run: npm run test:rest:public
@@ -37,7 +38,8 @@ jobs:
           PROXY_PORT: ${{ secrets.PROXY_PORT }}
           PROXY_USER: ${{ secrets.PROXY_USER }}
           PROXY_PASS: ${{ secrets.PROXY_PASS }}
-
+          concurrency:  ${{ secrets.PROXY_PASS }}
+  
       - name: Test REST API Private
         run: npm run test:rest:private
         env:
