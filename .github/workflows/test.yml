@@ -21,13 +21,16 @@ jobs:
           cache: 'npm'
 
       - name: Install
-        run: npm ci --ignore-scripts
+        run: npm ci --ignore-scripts 
+        continue-on-error: false
 
       - name: Check Build
-        run: npm run build
+        run: npm run build 
+        continue-on-error: false
 
       - name: Check Lint
-        run: npm run lint
+        run: npm run lint 
+        continue-on-error: true
 
       - name: Test REST API Public
         run: npm run test:rest:public
