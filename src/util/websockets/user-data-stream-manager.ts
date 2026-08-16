@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import WebSocket from 'isomorphic-ws';
+
 import {
   WebsocketClientOptions,
   WsMarket,
@@ -153,7 +155,8 @@ export class UserDataStreamManager {
         `Existing ${wsKey} user data connection in progress for listen key. Avoiding duplicate`,
         { stateLastChangedAt, stateChangedTimeAgo, wsKey, derivedWsKey },
       );
-      return this.getWsStore().getWs(derivedWsKey);
+      const ws = this.getWsStore().getWs(derivedWsKey);
+      return ws ? { wsKey: derivedWsKey, ws } : undefined;
     }
 
     // Prepare the WS state for awareness whether this is a reconnect or fresh connect
@@ -198,7 +201,7 @@ export class UserDataStreamManager {
         derivedWsKey,
       );
 
-      return connectResult.ws;
+      return connectResult;
     } catch (e) {
       this.logger.error(
         'Exception in subscribeGeneralUserDataStreamWithListenKey()',

@@ -225,6 +225,39 @@ export interface WsMessageSpotUserDataExecutionReportEventRaw
   Q: numberInString;
   W: number;
   V: SelfTradePreventionMode;
+  /** Expiry reason when present (user data executionReport). */
+  eR?: string;
+  d?: number;
+  v?: number;
+  D?: number;
+  j?: number;
+  J?: number;
+  u?: number;
+  U?: number;
+  A?: numberInString;
+  B?: numberInString;
+  Cs?: string;
+  pl?: numberInString;
+  pL?: numberInString;
+  pY?: numberInString;
+}
+
+export interface WsMessagePortfolioMarginProAccountUpdateRaw
+  extends WsSharedBase {
+  e: 'PM_PRO_ACCOUNT_UPDATE';
+  E: number;
+  u: numberInString;
+  eq: numberInString;
+  ae: numberInString;
+  im: numberInString;
+  mm: numberInString;
+  avb: numberInString;
+  vmw: numberInString;
+}
+
+export interface WsMessageWsapiServerShutdownRaw extends WsSharedBase {
+  e: 'serverShutdown';
+  E: number;
 }
 
 export interface OrderObjectRaw {
@@ -317,6 +350,7 @@ export interface WsMessageFuturesUserDataAccountUpdateRaw extends WsSharedBase {
   T: number;
   a: {
     m: AccountUpdateEventType;
+    S?: string; // symbol; only when m is FUNDING_FEE
     B: WsMessageFuturesAccountUpdateBalanceRaw[];
     P: WsMessageFuturesAccountUpdatePositionRaw[];
   };
@@ -377,6 +411,7 @@ export interface WsMessageFuturesUserDataOrderTradeUpdateEventRaw
     pm: string;
     gtd: number;
     er?: string; // Order expire reason (available effective 2025-10-23)
+    M?: string; // modifyId from modify request; only when x is AMENDMENT
   };
 }
 
@@ -406,6 +441,7 @@ export interface WsMessageFuturesUserDataAlgoUpdateRaw extends WsSharedBase {
     R: boolean;
     tt: number;
     gtd: number;
+    ia?: boolean; // whether trailing stop algo has activated; placeholder, always false for now
   };
 }
 
@@ -443,7 +479,8 @@ export interface WsMessageFuturesUserDataAccountConfigUpdateEventRaw
 export interface WsMessageIndexPriceUpdateEventRaw extends WsSharedBase {
   e: 'indexPriceUpdate';
   E: number;
-  i: string;
+  i?: string;
+  s?: string;
   p: numberInString;
 }
 
@@ -452,6 +489,8 @@ export interface WsMessageMarkPriceUpdateEventRaw extends WsSharedBase {
   E: number;
   s: string;
   p: string;
+  /** Mark price moving average (USDⓈ-M mark price stream). */
+  ap?: string;
   P: string;
   i: string;
   r: string;
@@ -550,10 +589,12 @@ export type WsMessageFuturesUserDataEventRaw =
 
 export type WsUserDataEventsRaw =
   | WsRawSpotUserDataEventRaw
-  | WsMessageFuturesUserDataEventRaw;
+  | WsMessageFuturesUserDataEventRaw
+  | WsMessagePortfolioMarginProAccountUpdateRaw;
 
 export type WsRawMessage =
   | WsEventStreamTerminatedRaw
+  | WsMessageWsapiServerShutdownRaw
   | WsUserDataEventsRaw
   | WsMessageKlineRaw
   | WsMessageAggTradeRaw

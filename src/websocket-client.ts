@@ -43,6 +43,7 @@ import {
   getPromiseRefForWSAPIRequest,
   getRealWsKeyFromDerivedWsKey,
   getTestnetWsKey,
+  getTopicsPerWSKey,
   getWsKeyForProductGroup,
   getWsUrl,
   getWsURLSuffix,
@@ -63,6 +64,8 @@ import {
 import { WSConnectedResult } from './util/websockets/WsStore.types';
 
 const WS_LOGGER_CATEGORY = { category: 'binance-ws' };
+
+type TopicRequestsPerWsKeyEntry = [WsKey, WsTopicRequest<string>[]];
 
 export interface WSAPIRequestFlags {
   /** If true, will skip auth requirement for WS API connection */
@@ -186,7 +189,8 @@ export class WebsocketClient extends BaseWebsocketClient<
   public connectPublic(): Promise<WSConnectedResult | undefined>[] {
     return [
       this.connect(WS_KEY_MAP.main),
-      this.connect(WS_KEY_MAP.usdm),
+      this.connect(WS_KEY_MAP.usdmPublic),
+      this.connect(WS_KEY_MAP.usdmMarket),
       this.connect(WS_KEY_MAP.coinm),
       this.connect(WS_KEY_MAP.eoptions),
       this.connect(WS_KEY_MAP.alpha),
@@ -236,7 +240,21 @@ export class WebsocketClient extends BaseWebsocketClient<
     const topicRequests = Array.isArray(requests) ? requests : [requests];
     const normalisedTopicRequests = getNormalisedTopicRequests(topicRequests);
 
-    return this.subscribeTopicsForWsKey(normalisedTopicRequests, wsKey);
+    const topicRequestsPerWsKey = getTopicsPerWSKey(
+      normalisedTopicRequests,
+      wsKey,
+    );
+
+    const topicRequestEntries = Object.entries(
+      topicRequestsPerWsKey,
+    ) as TopicRequestsPerWsKeyEntry[];
+
+    const subscribePromises = topicRequestEntries.map(
+      ([resolvedWsKey, resolvedTopicRequests]) =>
+        this.subscribeTopicsForWsKey(resolvedTopicRequests, resolvedWsKey),
+    );
+
+    return Promise.all(subscribePromises);
   }
 
   /**
@@ -254,7 +272,20 @@ export class WebsocketClient extends BaseWebsocketClient<
     const topicRequests = Array.isArray(requests) ? requests : [requests];
     const normalisedTopicRequests = getNormalisedTopicRequests(topicRequests);
 
-    return this.unsubscribeTopicsForWsKey(normalisedTopicRequests, wsKey);
+    const topicRequestsPerWsKey = getTopicsPerWSKey(
+      normalisedTopicRequests,
+      wsKey,
+    );
+    const topicRequestEntries = Object.entries(
+      topicRequestsPerWsKey,
+    ) as TopicRequestsPerWsKeyEntry[];
+
+    const unsubscribePromises = topicRequestEntries.map(
+      ([resolvedWsKey, resolvedTopicRequests]) =>
+        this.unsubscribeTopicsForWsKey(resolvedTopicRequests, resolvedWsKey),
+    );
+
+    return Promise.all(unsubscribePromises);
   }
 
   /**
@@ -1214,7 +1245,7 @@ export class WebsocketClient extends BaseWebsocketClient<
     wsKey: WsKey = 'main',
     forceNewConnection?: boolean,
     miscState?: MiscUserDataConnectionState,
-  ): Promise<WSConnectedResult | void> {
+  ): Promise<WSConnectedResult | undefined> {
     this.logger.trace('subscribeSpotUserDataStream()', {
       wsKey,
       forceNewConnection,
@@ -1439,10 +1470,14 @@ export class WebsocketClient extends BaseWebsocketClient<
    * Note: the wsKey parameter is optional, but can be used to connect to other environments for this product group.
    */
   public async subscribeUsdFuturesUserDataStream(
-    wsKey: WsKey = WS_KEY_MAP.usdmPrivate, // usdm | usdmPrivate | usdmTestnet
+    userWsKey: WsKey = WS_KEY_MAP.usdmPrivate, //  usdmPrivate | usdmTestnetPrivate
     forceNewConnection?: boolean,
     miscState?: MiscUserDataConnectionState,
   ): Promise<WSConnectedResult | undefined> {
+    // Prevent 'usdm' from being used unintentionally, since this has to be routed via the private endpoints.
+    const wsKey =
+      userWsKey === WS_KEY_MAP.usdm ? WS_KEY_MAP.usdmPrivate : userWsKey;
+
     try {
       const isTestnet =
         wsKey === WS_KEY_MAP.usdmTestnet ||
@@ -1614,7 +1649,6 @@ export class WebsocketClient extends BaseWebsocketClient<
       );
     }
 
-    // todo: close?
     this.close(userDataWsKey);
   }
 
@@ -1651,7 +1685,9 @@ export class WebsocketClient extends BaseWebsocketClient<
         realWsKey,
       });
       console.trace();
-      process.exit(-1);
+      throw new Error(
+        'Derived key fed into respawn method! This should not happen. Please report this if you see it, with steps to reproduce.',
+      );
     }
 
     // If another connection attempt is in progress for this listen key, don't initiate a retry or the risk is multiple connections on the same listen key
@@ -1662,7 +1698,7 @@ export class WebsocketClient extends BaseWebsocketClient<
       respawnAttempt: context?.respawnAttempt,
     };
 
-    let ws: WSConnectedResult | undefined | void = undefined;
+    let ws: WSConnectedResult | undefined;
 
     try {
       switch (market) {

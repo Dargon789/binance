@@ -254,6 +254,17 @@ export interface WSAPIOrder {
   selfTradePreventionMode: string;
   preventedMatchId?: number;
   preventedQuantity?: numberInString;
+  /** Present only for expired orders. */
+  expiryReason?: string;
+}
+
+export interface WSAPIBlockTrade {
+  id: number;
+  price: numberInString;
+  qty: numberInString;
+  quoteQty: numberInString;
+  time: number;
+  isBuyerMaker: boolean;
 }
 
 export interface WSAPIOrderList {
@@ -421,6 +432,8 @@ export interface WSAPIOrderListStatusResponse {
     symbol: string;
     orderId: number;
     clientOrderId: string;
+    /** Present only for expired orders. */
+    expiryReason?: string;
   }[];
 }
 
@@ -443,6 +456,8 @@ export interface WSAPISOROrderPlaceResponse {
   type: string;
   side: string;
   workingTime: number;
+  /** With newOrderRespType RESULT or FULL when the order has an expiry reason. */
+  expiryReason?: string;
   fills: {
     matchType: string;
     price: string;
@@ -510,6 +525,7 @@ export interface WSAPIFuturesOrder {
   time?: number;
   activatePrice?: string;
   priceRate?: string;
+  modifyId?: number;
 }
 
 export interface WSAPIFuturesPosition {
@@ -682,6 +698,8 @@ export interface WSAPISpotOrderRESULT extends WSAPISpotOrderACK {
   side: string;
   workingTime: number;
   selfTradePreventionMode: string;
+  /** With newOrderRespType RESULT or FULL when the order has an expiry reason. */
+  expiryReason?: string;
 }
 
 export interface WSAPISpotOrderFill {

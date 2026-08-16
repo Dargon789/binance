@@ -23,13 +23,18 @@ import {
   ContinuousContractKlinesParams,
   ForceOrderResult,
   FundingRateHistory,
+  FuturesAlgoOrderResponse,
+  FuturesCancelAlgoOrderParams,
+  FuturesCancelAlgoOrderResponse,
   FuturesCoinMAccountBalance,
   FuturesCoinMAccountInformation,
   FuturesCoinMBasisParams,
   FuturesCoinMTakerBuySellVolumeParams,
   FuturesDataPaginatedParams,
   FuturesExchangeInfo,
+  FuturesNewAlgoOrderParams,
   FuturesOrderBook,
+  FuturesQueryOpenAlgoOrdersParams,
   GetForceOrdersParams,
   GetIncomeHistoryParams,
   GetPositionMarginChangeHistoryParams,
@@ -379,6 +384,32 @@ export class CoinMClient extends BaseRestClient {
     return this.getPrivate('dapi/v1/openOrder', params);
   }
 
+  /**
+   *
+   * Algo Order Endpoints (Effective 2026-06-30, CM-UM integration)
+   * Conditional orders migrate to Algo Service on COIN-M
+   *
+   **/
+
+  submitNewAlgoOrder(
+    params: FuturesNewAlgoOrderParams,
+  ): Promise<FuturesAlgoOrderResponse> {
+    this.validateOrderId(params, 'clientAlgoId');
+    return this.postPrivate('dapi/v1/algoOrder', params);
+  }
+
+  cancelAlgoOrder(
+    params: FuturesCancelAlgoOrderParams,
+  ): Promise<FuturesCancelAlgoOrderResponse> {
+    return this.deletePrivate('dapi/v1/algoOrder', params);
+  }
+
+  getOpenAlgoOrders(
+    params?: FuturesQueryOpenAlgoOrdersParams,
+  ): Promise<FuturesAlgoOrderResponse[]> {
+    return this.getPrivate('dapi/v1/openAlgoOrders', params);
+  }
+
   getForceOrders(params?: GetForceOrdersParams): Promise<ForceOrderResult[]> {
     return this.getPrivate('dapi/v1/forceOrders', params);
   }
@@ -678,6 +709,7 @@ export class CoinMClient extends BaseRestClient {
   private validateOrderId(
     params:
       | NewFuturesOrderParams
+      | FuturesNewAlgoOrderParams
       | CancelOrderParams
       | NewOCOParams
       | CancelOCOParams,

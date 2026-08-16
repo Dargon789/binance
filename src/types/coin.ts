@@ -86,6 +86,7 @@ export interface CoinMPositionTrade {
   positionSide: PositionSide;
   buyer: boolean;
   maker: boolean;
+  quoteQty?: numberInString;
 }
 
 export interface FundingRate {

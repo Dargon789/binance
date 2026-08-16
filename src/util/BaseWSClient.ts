@@ -529,7 +529,7 @@ export abstract class BaseWebsocketClient<
           'Refused to connect to ws with existing active connection',
           { ...WS_LOGGER_CATEGORY, wsKey },
         );
-        return { wsKey, ws: this.wsStore.getWs(wsKey) };
+        return { wsKey, ws: this.wsStore.getWs(wsKey)! };
       }
 
       // Don't check for reconnecting? Conflicts a bit with user data reconnect workflow...
@@ -578,7 +578,11 @@ export abstract class BaseWebsocketClient<
 
     const { protocols = [], ...wsOptions } = this.options.wsOptions || {};
 
-    const ws = new WebSocket(url, protocols, wsOptions);
+    const ws: WebSocket & {
+      onping?: (event: unknown) => void;
+      onpong?: (event: unknown) => void;
+      wsKey?: TWSKey;
+    } = new WebSocket(url, protocols, wsOptions);
     // this.wsUrlKeyMap[url] = wsRefKey;
 
     ws.onopen = (event: any) => this.onWsOpen(event, wsKey, url, ws);
@@ -1152,7 +1156,7 @@ export abstract class BaseWebsocketClient<
         inProgressPromise.resolve({
           wsKey,
           event,
-          ws: wsState.ws,
+          ws: wsState.ws!,
         });
       }
     } catch (e) {

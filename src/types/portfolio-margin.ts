@@ -60,10 +60,10 @@ export interface NewPortfolioUMOrderReq {
 export interface NewPortfolioUMOrderResponse {
   clientOrderId: string;
   cumQty: string;
-  cumQuote: string;
+  cumQuote?: string;
   executedQty: string;
   orderId: number;
-  avgPrice: string;
+  avgPrice?: string;
   origQty: string;
   price: string;
   reduceOnly: boolean;
@@ -123,6 +123,96 @@ export interface NewPortfolioConditionalOrderResponse {
   priceMatch: PMPriceMatch;
 }
 
+export type PortfolioUMAlgoType = 'CONDITIONAL';
+
+export interface NewPortfolioUMAlgoOrderReq {
+  algoType: PortfolioUMAlgoType;
+  symbol: string;
+  side: 'BUY' | 'SELL';
+  positionSide?: 'BOTH' | 'LONG' | 'SHORT';
+  type: PMStrategyType;
+  timeInForce?: string;
+  quantity?: string;
+  price?: string;
+  triggerPrice?: string;
+  workingType?: PMWorkingType;
+  priceMatch?: PMPriceMatch;
+  closePosition?: string;
+  priceProtect?: string;
+  reduceOnly?: string;
+  activatePrice?: string;
+  callbackRate?: string;
+  clientAlgoId?: string;
+  newOrderRespType?: 'ACK' | 'RESULT';
+  selfTradePreventionMode?: PMSelfTradePreventionMode;
+  goodTillDate?: number;
+}
+
+export interface PortfolioUMAlgoOrder {
+  algoId: number;
+  clientAlgoId: string;
+  algoType: string;
+  orderType: string;
+  symbol: string;
+  side: string;
+  positionSide: string;
+  timeInForce: string;
+  quantity: string;
+  algoStatus: string;
+  triggerPrice: string;
+  price: string;
+  icebergQuantity: string | null;
+  selfTradePreventionMode: string;
+  workingType: string;
+  priceMatch: string;
+  closePosition: boolean;
+  priceProtect: boolean;
+  reduceOnly: boolean;
+  activatePrice: string;
+  callbackRate: string;
+  createTime: number;
+  updateTime: number;
+  triggerTime: number;
+  goodTillDate: number;
+  actualOrderId?: string;
+  actualPrice?: string;
+  tpTriggerPrice?: string;
+  tpPrice?: string;
+  slTriggerPrice?: string;
+  slPrice?: string;
+  tpOrderType?: string;
+}
+
+export interface CancelPortfolioUMAlgoOrderReq {
+  algoId?: number;
+  clientAlgoId?: string;
+}
+
+export interface PortfolioUMCancelAlgoOrderResponse {
+  algoId: number;
+  clientAlgoId: string;
+  code: string;
+  msg: string;
+}
+
+export interface PortfolioUMCancelAllUMAlgoOpenOrdersResponse {
+  code: number;
+  msg: string;
+}
+
+export interface QueryPortfolioUMAlgoOrderReq {
+  algoId?: number;
+  clientAlgoId?: string;
+}
+
+export interface QueryPortfolioAllUMAlgoOrdersReq {
+  symbol: string;
+  algoId?: number;
+  startTime?: number;
+  endTime?: number;
+  limit?: number;
+}
+
 export interface NewPortfolioCMOrderReq {
   symbol: string;
   side: 'BUY' | 'SELL';
@@ -139,10 +229,10 @@ export interface NewPortfolioCMOrderReq {
 export interface NewPortfolioCMOrderResponse {
   clientOrderId: string;
   cumQty: string;
-  cumBase: string;
+  cumBase?: string;
   executedQty: string;
   orderId: number;
-  avgPrice: string;
+  avgPrice?: string;
   origQty: string;
   price: string;
   reduceOnly: boolean;
@@ -299,10 +389,10 @@ export interface CancelPortfolioUMOrderReq {
 }
 
 export interface PortfolioUMCancelOrderResponse {
-  avgPrice: string;
+  avgPrice?: string;
   clientOrderId: string;
   cumQty: string;
-  cumQuote: string;
+  cumQuote?: string;
   executedQty: string;
   orderId: number;
   origQty: string;
@@ -357,10 +447,10 @@ export interface CancelPortfolioCMOrderReq {
 }
 
 export interface PortfolioCMCancelOrderResponse {
-  avgPrice: string;
+  avgPrice?: string;
   clientOrderId: string;
   cumQty: string;
-  cumBase: string;
+  cumBase?: string;
   executedQty: string;
   orderId: number;
   origQty: string;
@@ -509,6 +599,7 @@ export interface ModifyPortfolioUMOrderReq {
   orderId?: number;
   origClientOrderId?: string;
   priceMatch?: PMPriceMatch;
+  modifyId?: number;
 }
 
 export interface PortfolioUMModifyOrderResponse {
@@ -517,11 +608,11 @@ export interface PortfolioUMModifyOrderResponse {
   status: string;
   clientOrderId: string;
   price: string;
-  avgPrice: string;
+  avgPrice?: string;
   origQty: string;
   executedQty: string;
   cumQty: string;
-  cumQuote: string;
+  cumQuote?: string;
   timeInForce: string;
   type: 'LIMIT';
   reduceOnly: boolean;
@@ -532,6 +623,7 @@ export interface PortfolioUMModifyOrderResponse {
   goodTillDate: number;
   updateTime: number;
   priceMatch: PMPriceMatch;
+  modifyId?: number;
 }
 
 export interface ModifyPortfolioCMOrderReq {
@@ -541,6 +633,7 @@ export interface ModifyPortfolioCMOrderReq {
   price: string;
   orderId?: number;
   origClientOrderId?: string;
+  modifyId?: number;
 }
 
 export interface PortfolioCMModifyOrderResponse {
@@ -550,11 +643,11 @@ export interface PortfolioCMModifyOrderResponse {
   status: string;
   clientOrderId: string;
   price: string;
-  avgPrice: string;
+  avgPrice?: string;
   origQty: string;
   executedQty: string;
   cumQty: string;
-  cumBase: string;
+  cumBase?: string;
   timeInForce: string;
   type: 'LIMIT';
   reduceOnly: boolean;
@@ -562,6 +655,7 @@ export interface PortfolioCMModifyOrderResponse {
   positionSide: 'LONG' | 'SHORT' | 'BOTH';
   origType: 'LIMIT';
   updateTime: number;
+  modifyId?: number;
 }
 
 export interface QueryPortfolioUMOrderReq {
@@ -826,6 +920,7 @@ export interface PortfolioUMOrderModificationHistory {
   time: number;
   amendment: PortfolioUMOrderAmendment;
   priceMatch: PMPriceMatch;
+  modifyId?: number;
 }
 
 export interface QueryPortfolioCMOrderAmendmentReq {
@@ -857,6 +952,7 @@ export interface PortfolioCMOrderModificationHistory {
   clientOrderId: string;
   time: number;
   amendment: PortfolioCMOrderAmendment;
+  modifyId?: number;
 }
 
 export interface QueryPortfolioMarginForceOrdersReq {
@@ -901,6 +997,9 @@ export interface PortfolioUMTrade {
   buyer: boolean;
   maker: boolean;
   positionSide: 'BOTH' | 'LONG' | 'SHORT';
+  pair?: string;
+  baseQty?: string;
+  marginAsset?: string;
 }
 
 export interface QueryPortfolioCMTradesReq {
@@ -929,6 +1028,7 @@ export interface PortfolioCMTrade {
   positionSide: 'BOTH' | 'LONG' | 'SHORT';
   buyer: boolean;
   maker: boolean;
+  quoteQty?: string;
 }
 
 export interface PortfolioADLQuantile {
@@ -1418,4 +1518,9 @@ export interface DownloadLinkResponse {
   notified: boolean; // ignore
   expirationTimestamp: number; // The link would expire after this timestamp
   isExpired: boolean | null;
+}
+
+export interface PortfolioTradFiPerpsContractSignResponse {
+  code: number;
+  msg: string;
 }

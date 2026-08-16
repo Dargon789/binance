@@ -11,7 +11,7 @@ import { notAuthenticatedError } from './response.util';
 // Expected pinned public key (SPKI SHA-256 hash)
 // You can extract it from the certificate using openssl:
 // openssl s_client -connect api.binance.com:443 </dev/null 2>/dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | base64
-const PINNED_PUBLIC_KEY = '8f+yoE6YBsp3ftzgATuaWqQiZna/x30yVX676Ky7lxY=';
+const PINNED_PUBLIC_KEY = '/Y6BOeqMgXS6wjqk6emFs+Y+HWkIXO2R8Dox5VO1YT0=';
 
 // Load the trusted CA certificate (optional but recommended)
 // import fs from 'fs';

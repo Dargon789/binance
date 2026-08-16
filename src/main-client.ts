@@ -47,6 +47,8 @@ import {
   AlphaAggTrade,
   AlphaAggTradesParams,
   AlphaExchangeInfo,
+  AlphaFullDepthParams,
+  AlphaFullDepthResponse,
   AlphaKline,
   AlphaKlinesParams,
   AlphaTicker,
@@ -62,6 +64,17 @@ import {
   BasicSubAccount,
   BasicTimeRangeParam,
   BethRewardsHistory,
+  BfusdAccountResponse,
+  BfusdQuotaResponse,
+  BfusdRateHistoryRow,
+  BfusdRedeemParams,
+  BfusdRedeemResponse,
+  BfusdRedemptionHistoryRow,
+  BfusdRewardsHistoryRow,
+  BfusdSubscribeParams,
+  BfusdSubscribeResponse,
+  BfusdSubscriptionHistoryRow,
+  BlockTrade,
   BlvtRedemptionRecord,
   BlvtSubscriptionRecord,
   BlvtUserLimitInfo,
@@ -148,6 +161,9 @@ import {
   DualInvestmentPosition,
   DualInvestmentProduct,
   DustConversion,
+  DustConvertibleAssetsParams,
+  DustConvertibleAssetsResponse,
+  DustConvertParams,
   DustInfo,
   DustLog,
   EditInvestmentPlanParams,
@@ -192,6 +208,10 @@ import {
   GetApplicationStatusParams,
   GetAssetParams,
   GetBethRewardsHistoryParams,
+  GetBfusdRateHistoryParams,
+  GetBfusdRedemptionHistoryParams,
+  GetBfusdRewardsHistoryParams,
+  GetBfusdSubscriptionHistoryParams,
   GetBlvtRedemptionRecordParams,
   GetBlvtSubscriptionRecordParams,
   GetBnsolRateHistoryReq,
@@ -255,6 +275,7 @@ import {
   GetInstitutionalLoanForceLiquidationParams,
   GetInstitutionalLoanForceLiquidationResponse,
   GetInstitutionalLoanInterestHistoryParams,
+  GetInstitutionalLoanMaxBorrowableParams,
   GetInstitutionalLoanRiskUnitDetailsParams,
   GetLoanableAssetsDataParams,
   GetLoanBorrowHistoryParams,
@@ -270,6 +291,8 @@ import {
   GetMarginAccountBorrowRepayRecordsParams,
   GetMarginCapitalFlowParams,
   GetMarginInterestHistoryParams,
+  GetMarginInterestRebateBalanceRecordsParams,
+  GetMarginLiquidationLoanRepayHistoryParams,
   GetMarginOrderCountUsageParams,
   GetMinerDetailsParams,
   GetMinerDetailsResponse,
@@ -301,6 +324,10 @@ import {
   GetPortfolioMarginProInterestHistoryResponse,
   GetRateHistory,
   GetRateHistoryParams,
+  GetRwusdRateHistoryParams,
+  GetRwusdRedemptionHistoryParams,
+  GetRwusdRewardsHistoryParams,
+  GetRwusdSubscriptionHistoryParams,
   GetSmallLiabilityExchangeHistoryParams,
   GetSoftStakingProductListParams,
   GetSoftStakingProductListResponse,
@@ -322,20 +349,24 @@ import {
   GetTargetAssetListResponse,
   GetTargetAssetROIParams,
   GetTravelRuleDepositHistoryParams,
+  GetTravelRuleRegionListParams,
   GetTravelRuleWithdrawHistoryParams,
   GetTravelRuleWithdrawHistoryV2Params,
   GetUniversalTransferBrokerParams,
+  GetVipLoanFixedRateMarketParams,
   GetVipLoanOngoingOrdersParams,
   GetVipLoanRepaymentHistoryParams,
   GetWbethRewardsHistoryResponse,
   GetWrapHistoryParams,
   HistoricalAlgoOrder,
+  HistoricalBlockTradesParams,
   HistoricalDataLink,
   HistoricalSpotAlgoOrder,
   IndexLinkedPlanRedemptionRecord,
   InstitutionalLoanBorrowParams,
   InstitutionalLoanBorrowResponse,
   InstitutionalLoanInterestHistoryResponse,
+  InstitutionalLoanMaxBorrowableResponse,
   InstitutionalLoanRepayParams,
   InstitutionalLoanRepayResponse,
   InstitutionalLoanRiskUnitDetails,
@@ -375,6 +406,11 @@ import {
   MarginDelistSchedule,
   MarginInterestHistory,
   MarginInterestRateHistory,
+  MarginInterestRebateBalanceRecordsResponse,
+  MarginInterestRebateBalanceResponse,
+  MarginLiquidationLoan,
+  MarginLiquidationLoanRepayHistoryResponse,
+  MarginLiquidationLoanRepayResponse,
   MarginOrderCountUsageResponse,
   MarginOTOCOOrder,
   MarginOTOOrder,
@@ -427,6 +463,10 @@ import {
   PMProMintBFUSDParams,
   PMProMintBFUSDResponse,
   PMProRedeemBFUSDResponse,
+  PortfolioDeltaModeStatus,
+  PortfolioMarginMarginCallLevelDeleteResponse,
+  PortfolioMarginMarginCallLevelGetResponse,
+  PortfolioMarginMarginCallLevelResponse,
   PortfolioMarginProAccountBalance,
   PortfolioMarginProSpanAccountInfo,
   PreventedMatch,
@@ -466,10 +506,22 @@ import {
   RepayCryptoLoanFlexibleWithCollateralResponse,
   RepayCryptoLoanParams,
   RepayCryptoLoanResponse,
+  RepayMarginLiquidationLoanParams,
   ReplaceSpotOrderParams,
   ReplaceSpotOrderResultSuccess,
   RollingWindowTickerParams,
+  RwusdAccountResponse,
+  RwusdQuotaResponse,
+  RwusdRateHistoryRow,
+  RwusdRedeemParams,
+  RwusdRedeemResponse,
+  RwusdRedemptionHistoryRow,
+  RwusdRewardsHistoryRow,
+  RwusdSubscribeParams,
+  RwusdSubscribeResponse,
+  RwusdSubscriptionHistoryRow,
   SetAutoSubscribeParams,
+  SetPortfolioMarginMarginCallLevelParams,
   SetSoftStakingParams,
   SetSoftStakingResponse,
   SimpleEarnAccountResponse,
@@ -498,7 +550,13 @@ import {
   SpecialLowLatencyKeyResponse,
   SpotAlgoOrder,
   SpotAmendKeepPriorityResult,
+  SpotAssetTag,
+  SpotAssetTagsParams,
+  SpotExecutionRulesParams,
+  SpotExecutionRulesResponse,
   SpotOrder,
+  SpotReferencePriceCalculationResponse,
+  SpotReferencePriceResult,
   StakingBasicParams,
   StakingHistory,
   StakingHistoryParams,
@@ -582,6 +640,7 @@ import {
   SubscribeDualInvestmentProductResponse,
   SubscribeEthStakingV2Response,
   SubscribeSolStakingResponse,
+  SwitchPortfolioDeltaModeParams,
   SymbolOrderBookTicker,
   SymbolTradeFee,
   SystemStatusResponse,
@@ -595,7 +654,9 @@ import {
   TradingDayTickerSingle,
   TransferBrokerSubAccount,
   TransferBrokerSubAccountParams,
+  TravelRuleCountryListResponse,
   TravelRuleDepositHistoryRecord,
+  TravelRuleRegionListResponse,
   TravelRuleWithdrawHistoryRecord,
   UniversalTransferBrokerParams,
   UniversalTransferHistoryParams,
@@ -609,6 +670,9 @@ import {
   VipLoanAccruedInterestRecord,
   VipLoanBorrowParams,
   VipLoanBorrowResponse,
+  VipLoanFixedRateBorrowParams,
+  VipLoanFixedRateBorrowResponse,
+  VipLoanFixedRateMarketRecord,
   VipLoanInterestRateHistoryParams,
   VipLoanInterestRateRecord,
   VipLoanRenewParams,
@@ -757,6 +821,12 @@ export class MainClient extends BaseRestClient {
     return this.get('api/v3/historicalTrades', params);
   }
 
+  getHistoricalBlockTrades(
+    params: HistoricalBlockTradesParams,
+  ): Promise<BlockTrade[]> {
+    return this.get('api/v3/historicalBlockTrades', params);
+  }
+
   getAggregateTrades(
     params: SymbolFromPaginatedRequestFromId,
   ): Promise<AggregateTrade[]> {
@@ -773,6 +843,34 @@ export class MainClient extends BaseRestClient {
 
   getAvgPrice(params: { symbol: string }): Promise<CurrentAvgPrice> {
     return this.get('api/v3/avgPrice', params);
+  }
+
+  getExecutionRules(
+    params?: SpotExecutionRulesParams,
+  ): Promise<SpotExecutionRulesResponse> {
+    if (params && params['symbols'] && Array.isArray(params['symbols'])) {
+      const { symbols, ...otherParams } = params;
+      const symbolsQueryParam = JSON.stringify(symbols);
+
+      return this.get(
+        'api/v3/executionRules?symbols=' + symbolsQueryParam,
+        otherParams,
+      );
+    }
+    return this.get('api/v3/executionRules', params);
+  }
+
+  getReferencePrice(params: {
+    symbol: string;
+  }): Promise<SpotReferencePriceResult> {
+    return this.get('api/v3/referencePrice', params);
+  }
+
+  getReferencePriceCalculation(params: {
+    symbol: string;
+    symbolStatus?: 'TRADING' | 'HALT' | 'BREAK';
+  }): Promise<SpotReferencePriceCalculationResponse> {
+    return this.get('api/v3/referencePrice/calculation', params);
   }
 
   get24hrChangeStatistics(params?: {
@@ -1359,6 +1457,41 @@ export class MainClient extends BaseRestClient {
   }
 
   /**
+   * Query the current cross-margin liquidation loan status (bankruptcy deficit).
+   */
+  getMarginLiquidationLoan(): Promise<MarginLiquidationLoan> {
+    return this.getPrivate('sapi/v1/margin/liquidation-loan');
+  }
+
+  /**
+   * Repay an outstanding cross-margin liquidation loan from the spot wallet.
+   */
+  repayMarginLiquidationLoan(
+    params: RepayMarginLiquidationLoanParams,
+  ): Promise<MarginLiquidationLoanRepayResponse> {
+    return this.postPrivate('sapi/v1/margin/liquidation-loan/repay', params);
+  }
+
+  /**
+   * Query cross-margin liquidation loan repayment history.
+   */
+  getMarginLiquidationLoanRepayHistory(
+    params?: GetMarginLiquidationLoanRepayHistoryParams,
+  ): Promise<MarginLiquidationLoanRepayHistoryResponse> {
+    return this.getPrivate(
+      'sapi/v1/margin/liquidation-loan/repay-history',
+      params,
+    );
+  }
+
+  /**
+   * Exit Margin Special Key mode for Cross Margin Classic accounts.
+   */
+  exitMarginSpecialKeyMode(): Promise<object> {
+    return this.postPrivate('sapi/v1/margin/exit-special-key-mode');
+  }
+
+  /**
    *
    * MARGIN TRADING Endpoints - Transfer endpoints
    *
@@ -1572,6 +1705,10 @@ export class MainClient extends BaseRestClient {
     return this.postPrivate('sapi/v3/asset/getUserAsset', params);
   }
 
+  getSpotAssetTags(params?: SpotAssetTagsParams): Promise<SpotAssetTag[]> {
+    return this.get('sapi/v1/spot/asset/tags', params);
+  }
+
   submitUniversalTransfer(
     params: UniversalTransferParams,
   ): Promise<{ tranId: number }> {
@@ -1590,6 +1727,25 @@ export class MainClient extends BaseRestClient {
 
   convertDustToBnb(params: ConvertDustParams): Promise<DustConversion> {
     return this.postPrivate('sapi/v1/asset/dust', params);
+  }
+
+  /**
+   * Convert dust assets to a target asset (e.g. BNB, USDT).
+   */
+  convertDustAssets(params: DustConvertParams): Promise<DustConversion> {
+    return this.postPrivate('sapi/v1/asset/dust-convert/convert', params);
+  }
+
+  /**
+   * Query assets eligible for dust conversion.
+   */
+  queryDustConvertibleAssets(
+    params: DustConvertibleAssetsParams,
+  ): Promise<DustConvertibleAssetsResponse> {
+    return this.postPrivate(
+      'sapi/v1/asset/dust-convert/query-convertible-assets',
+      params,
+    );
   }
 
   getDustLog(params?: BasicTimeRangeParam): Promise<DustLog> {
@@ -1817,6 +1973,16 @@ export class MainClient extends BaseRestClient {
    */
   getOnboardedVASPList(): Promise<VASPInfo[]> {
     return this.getPrivate('sapi/v1/localentity/vasp');
+  }
+
+  getTravelRuleCountryList(): Promise<TravelRuleCountryListResponse> {
+    return this.getPrivate('sapi/v1/localentity/country/list');
+  }
+
+  getTravelRuleRegionList(
+    params: GetTravelRuleRegionListParams,
+  ): Promise<TravelRuleRegionListResponse> {
+    return this.getPrivate('sapi/v1/localentity/region/list', params);
   }
 
   /**
@@ -2575,6 +2741,102 @@ export class MainClient extends BaseRestClient {
       'sapi/v1/eth-staking/wbeth/history/unwrapHistory',
       params,
     );
+  }
+
+  /**
+   *
+   * BFUSD (sapi/v1/bfusd)
+   *
+   **/
+
+  getBfusdAccount(): Promise<BfusdAccountResponse> {
+    return this.getPrivate('sapi/v1/bfusd/account');
+  }
+
+  getBfusdQuota(): Promise<BfusdQuotaResponse> {
+    return this.getPrivate('sapi/v1/bfusd/quota');
+  }
+
+  subscribeBfusd(
+    params: BfusdSubscribeParams,
+  ): Promise<BfusdSubscribeResponse> {
+    return this.postPrivate('sapi/v1/bfusd/subscribe', params);
+  }
+
+  redeemBfusd(params: BfusdRedeemParams): Promise<BfusdRedeemResponse> {
+    return this.postPrivate('sapi/v1/bfusd/redeem', params);
+  }
+
+  getBfusdSubscriptionHistory(
+    params: GetBfusdSubscriptionHistoryParams,
+  ): Promise<{ rows: BfusdSubscriptionHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/bfusd/history/subscriptionHistory', params);
+  }
+
+  getBfusdRedemptionHistory(
+    params: GetBfusdRedemptionHistoryParams,
+  ): Promise<{ rows: BfusdRedemptionHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/bfusd/history/redemptionHistory', params);
+  }
+
+  getBfusdRewardsHistory(
+    params: GetBfusdRewardsHistoryParams,
+  ): Promise<{ rows: BfusdRewardsHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/bfusd/history/rewardsHistory', params);
+  }
+
+  getBfusdRateHistory(
+    params: GetBfusdRateHistoryParams,
+  ): Promise<{ rows: BfusdRateHistoryRow[]; total: string }> {
+    return this.getPrivate('sapi/v1/bfusd/history/rateHistory', params);
+  }
+
+  /**
+   *
+   * RWUSD (sapi/v1/rwusd)
+   *
+   **/
+
+  getRwusdAccount(): Promise<RwusdAccountResponse> {
+    return this.getPrivate('sapi/v1/rwusd/account');
+  }
+
+  getRwusdQuota(): Promise<RwusdQuotaResponse> {
+    return this.getPrivate('sapi/v1/rwusd/quota');
+  }
+
+  subscribeRwusd(
+    params: RwusdSubscribeParams,
+  ): Promise<RwusdSubscribeResponse> {
+    return this.postPrivate('sapi/v1/rwusd/subscribe', params);
+  }
+
+  redeemRwusd(params: RwusdRedeemParams): Promise<RwusdRedeemResponse> {
+    return this.postPrivate('sapi/v1/rwusd/redeem', params);
+  }
+
+  getRwusdSubscriptionHistory(
+    params: GetRwusdSubscriptionHistoryParams,
+  ): Promise<{ rows: RwusdSubscriptionHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/rwusd/history/subscriptionHistory', params);
+  }
+
+  getRwusdRedemptionHistory(
+    params: GetRwusdRedemptionHistoryParams,
+  ): Promise<{ rows: RwusdRedemptionHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/rwusd/history/redemptionHistory', params);
+  }
+
+  getRwusdRewardsHistory(
+    params: GetRwusdRewardsHistoryParams,
+  ): Promise<{ rows: RwusdRewardsHistoryRow[]; total: number }> {
+    return this.getPrivate('sapi/v1/rwusd/history/rewardsHistory', params);
+  }
+
+  getRwusdRateHistory(
+    params: GetRwusdRateHistoryParams,
+  ): Promise<{ rows: RwusdRateHistoryRow[]; total: string }> {
+    return this.getPrivate('sapi/v1/rwusd/history/rateHistory', params);
   }
 
   /**
@@ -3602,6 +3864,19 @@ export class MainClient extends BaseRestClient {
     return this.postPrivate('sapi/v1/loan/vip/borrow', params);
   }
 
+  getVipLoanFixedRateMarket(params: GetVipLoanFixedRateMarketParams): Promise<{
+    total: number;
+    rows: VipLoanFixedRateMarketRecord[];
+  }> {
+    return this.getPrivate('sapi/v1/loan/vip/fixed/market', params);
+  }
+
+  borrowVipLoanFixedRate(
+    params: VipLoanFixedRateBorrowParams,
+  ): Promise<VipLoanFixedRateBorrowResponse> {
+    return this.postPrivate('sapi/v1/loan/vip/fixed/borrow', params);
+  }
+
   /**
    *
    * DUAL INVESTMENT Endpoints - Market Data
@@ -3819,6 +4094,30 @@ export class MainClient extends BaseRestClient {
 
   getPortfolioMarginProAccountInfo(): Promise<GetPortfolioMarginProAccountInfoResponse> {
     return this.getPrivate('sapi/v1/portfolio/account');
+  }
+
+  getPortfolioDeltaMode(): Promise<PortfolioDeltaModeStatus> {
+    return this.getPrivate('sapi/v1/portfolio/delta-mode');
+  }
+
+  switchPortfolioDeltaMode(
+    params: SwitchPortfolioDeltaModeParams,
+  ): Promise<{ msg: string }> {
+    return this.postPrivate('sapi/v1/portfolio/delta-mode', params);
+  }
+
+  setPortfolioMarginMarginCallLevel(
+    params: SetPortfolioMarginMarginCallLevelParams,
+  ): Promise<PortfolioMarginMarginCallLevelResponse> {
+    return this.postPrivate('sapi/v1/portfolio/margin-call-level', params);
+  }
+
+  getPortfolioMarginMarginCallLevel(): Promise<PortfolioMarginMarginCallLevelGetResponse> {
+    return this.getPrivate('sapi/v1/portfolio/margin-call-level');
+  }
+
+  deletePortfolioMarginMarginCallLevel(): Promise<PortfolioMarginMarginCallLevelDeleteResponse> {
+    return this.deletePrivate('sapi/v1/portfolio/margin-call-level');
   }
 
   bnbTransfer(params: BnbTransferParams): Promise<{
@@ -4069,6 +4368,12 @@ export class MainClient extends BaseRestClient {
    *
    **/
 
+  getInstitutionalLoanMaxBorrowable(
+    params: GetInstitutionalLoanMaxBorrowableParams,
+  ): Promise<InstitutionalLoanMaxBorrowableResponse> {
+    return this.getPrivate('sapi/v1/margin/loan-group/max-borrowable', params);
+  }
+
   borrowInstitutionalLoan(
     params: InstitutionalLoanBorrowParams,
   ): Promise<InstitutionalLoanBorrowResponse> {
@@ -4094,6 +4399,19 @@ export class MainClient extends BaseRestClient {
     params: GetInstitutionalLoanBorrowRepayRecordsParams,
   ): Promise<GetInstitutionalLoanBorrowRepayRecordsResponse> {
     return this.getPrivate('sapi/v1/margin/loan-group/borrow-repay', params);
+  }
+
+  getMarginInterestRebateBalance(): Promise<MarginInterestRebateBalanceResponse> {
+    return this.getPrivate('sapi/v1/margin/loan-group/interest-rebate-balance');
+  }
+
+  getMarginInterestRebateBalanceRecords(
+    params?: GetMarginInterestRebateBalanceRecordsParams,
+  ): Promise<MarginInterestRebateBalanceRecordsResponse> {
+    return this.getPrivate(
+      'sapi/v1/margin/loan-group/interest-rebate-balance/records',
+      params,
+    );
   }
 
   /**
@@ -4135,6 +4453,16 @@ export class MainClient extends BaseRestClient {
   getAlphaTicker(params: { symbol: string }): Promise<AlphaTicker> {
     return this.getForBaseUrl(
       'bapi/defi/v1/public/alpha-trade/ticker',
+      'www',
+      params,
+    );
+  }
+
+  getAlphaFullDepth(
+    params: AlphaFullDepthParams,
+  ): Promise<AlphaFullDepthResponse> {
+    return this.getForBaseUrl(
+      'bapi/defi/v1/public/alpha-trade/fullDepth',
       'www',
       params,
     );

@@ -8,7 +8,6 @@ import {
 } from '../futures';
 import {
   BooleanString,
-  BooleanStringCapitalised,
   KlineInterval,
   numberInString,
   OrderResponseType,
@@ -71,6 +70,12 @@ export interface WSAPITradesHistoricalRequest {
   limit?: number;
 }
 
+export interface WSAPIBlockTradesHistoricalRequest {
+  symbol: string;
+  fromId: number;
+  limit?: number;
+}
+
 export interface WSAPITradesAggregateRequest {
   symbol: string;
   fromId?: number;
@@ -90,6 +95,24 @@ export interface WSAPIKlinesRequest {
 
 export interface WSAPIAvgPriceRequest {
   symbol: string;
+}
+
+/**
+ * Query execution rules (e.g. PRICE_RANGE). Only one of symbol, symbols, or symbolStatus per request.
+ */
+export interface WSAPIExecutionRulesRequest {
+  symbol?: string;
+  symbols?: string[];
+  symbolStatus?: 'TRADING' | 'HALT' | 'BREAK';
+}
+
+export interface WSAPIReferencePriceRequest {
+  symbol: string;
+}
+
+export interface WSAPIReferencePriceCalculationRequest {
+  symbol: string;
+  symbolStatus?: 'TRADING' | 'HALT' | 'BREAK';
 }
 
 /**
@@ -605,7 +628,7 @@ export interface WSAPINewFuturesOrderRequest<numberType = numberInString> {
   activationPrice?: numberType;
   callbackRate?: numberType;
   workingType?: WorkingType;
-  priceProtect?: BooleanStringCapitalised;
+  priceProtect?: BooleanString;
   newOrderRespType?: 'ACK' | 'RESULT';
   selfTradePreventionMode?: SelfTradePreventionMode;
   priceMatch?: PriceMatchMode;
@@ -633,6 +656,7 @@ export interface WSAPIFuturesOrderModifyRequest {
     | 'QUEUE_20';
   origType?: string;
   positionSide?: 'BOTH' | 'LONG' | 'SHORT';
+  modifyId?: number;
   recvWindow?: number;
   timestamp: number;
 }
@@ -688,13 +712,13 @@ export interface WSAPINewFuturesAlgoOrderRequest<numberType = numberInString> {
   quantity?: numberType;
   reduceOnly?: BooleanString;
   price?: numberInString;
-  newClientOrderId?: string;
-  stopPrice?: numberInString;
+  clientAlgoId?: string;
+  triggerPrice?: numberInString;
   closePosition?: BooleanString;
   activatePrice?: numberInString;
   callbackRate?: numberInString;
   workingType?: WorkingType;
-  priceProtect?: BooleanStringCapitalised;
+  priceProtect?: BooleanString;
   newOrderRespType?: OrderResponseType;
   priceMatch?: PriceMatchMode;
   selfTradePreventionMode?: SelfTradePreventionMode;

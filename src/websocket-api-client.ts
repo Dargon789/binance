@@ -1,4 +1,10 @@
-import { ExchangeInfo, SpotAmendKeepPriorityResult } from './types/spot';
+import {
+  ExchangeInfo,
+  SpotAmendKeepPriorityResult,
+  SpotExecutionRulesResponse,
+  SpotReferencePriceCalculationResponse,
+  SpotReferencePriceResult,
+} from './types/spot';
 import {
   WSAPIResponse,
   WSAPIUserDataListenKeyRequest,
@@ -9,7 +15,9 @@ import {
   WSAPIAllOrderListsRequest,
   WSAPIAllOrdersRequest,
   WSAPIAvgPriceRequest,
+  WSAPIBlockTradesHistoricalRequest,
   WSAPIExchangeInfoRequest,
+  WSAPIExecutionRulesRequest,
   WSAPIFuturesAlgoOrderCancelRequest,
   WSAPIFuturesOrderBookRequest,
   WSAPIFuturesOrderCancelRequest,
@@ -43,6 +51,8 @@ import {
   WSAPIOrderStatusRequest,
   WSAPIOrderTestRequest,
   WSAPIRecvWindowTimestamp,
+  WSAPIReferencePriceCalculationRequest,
+  WSAPIReferencePriceRequest,
   WSAPISOROrderPlaceRequest,
   WSAPISOROrderTestRequest,
   WSAPITicker24hrRequest,
@@ -60,6 +70,7 @@ import {
   WSAPIAggregateTrade,
   WSAPIAllocation,
   WSAPIAvgPrice,
+  WSAPIBlockTrade,
   WSAPIBookTicker,
   WSAPIFullTicker,
   WSAPIFuturesAccountBalanceItem,
@@ -355,6 +366,21 @@ export class WebsocketAPIClient {
   }
 
   /**
+   * Get historical block trades
+   */
+  getSpotHistoricalBlockTrades(
+    params: WSAPIBlockTradesHistoricalRequest,
+    wsKey?: WSAPIWsKeyMain,
+  ): Promise<WSAPIResponse<WSAPIBlockTrade[]>> {
+    return this.wsClient.sendWSAPIRequest(
+      wsKey || WS_KEY_MAP.mainWSAPI,
+      'blockTrades.historical',
+      params,
+      { authIsOptional: true },
+    );
+  }
+
+  /**
    * Get aggregate trades
    * Note: An aggregate trade represents one or more individual trades that fill at the same time
    */
@@ -412,6 +438,51 @@ export class WebsocketAPIClient {
     return this.wsClient.sendWSAPIRequest(
       wsKey || WS_KEY_MAP.mainWSAPI,
       'avgPrice',
+      params,
+      { authIsOptional: true },
+    );
+  }
+
+  /**
+   * Query execution rules (e.g. PRICE_RANGE) for symbol(s) or by symbol status.
+   */
+  getSpotExecutionRules(
+    params?: WSAPIExecutionRulesRequest,
+    wsKey?: WSAPIWsKeyMain,
+  ): Promise<WSAPIResponse<SpotExecutionRulesResponse>> {
+    return this.wsClient.sendWSAPIRequest(
+      wsKey || WS_KEY_MAP.mainWSAPI,
+      'executionRules',
+      params,
+      { authIsOptional: true },
+    );
+  }
+
+  /**
+   * Query reference price for a symbol.
+   */
+  getSpotReferencePrice(
+    params: WSAPIReferencePriceRequest,
+    wsKey?: WSAPIWsKeyMain,
+  ): Promise<WSAPIResponse<SpotReferencePriceResult>> {
+    return this.wsClient.sendWSAPIRequest(
+      wsKey || WS_KEY_MAP.mainWSAPI,
+      'referencePrice',
+      params,
+      { authIsOptional: true },
+    );
+  }
+
+  /**
+   * Query how reference price is calculated for a symbol.
+   */
+  getSpotReferencePriceCalculation(
+    params: WSAPIReferencePriceCalculationRequest,
+    wsKey?: WSAPIWsKeyMain,
+  ): Promise<WSAPIResponse<SpotReferencePriceCalculationResponse>> {
+    return this.wsClient.sendWSAPIRequest(
+      wsKey || WS_KEY_MAP.mainWSAPI,
+      'referencePrice.calculation',
       params,
       { authIsOptional: true },
     );
@@ -1355,13 +1426,11 @@ export class WebsocketAPIClient {
         wsKey,
       });
 
-      await this.getWSClient().subscribeUsdFuturesUserDataStream(
+      return this.getWSClient().subscribeUsdFuturesUserDataStream(
         wsKey === WS_KEY_MAP.usdmWSAPI
           ? WS_KEY_MAP.usdm
           : WS_KEY_MAP.usdmTestnet,
       );
-
-      return;
     }
 
     if (
@@ -1373,13 +1442,11 @@ export class WebsocketAPIClient {
         wsKey,
       });
 
-      await this.getWSClient().subscribeCoinFuturesUserDataStream(
+      return this.getWSClient().subscribeCoinFuturesUserDataStream(
         wsKey === WS_KEY_MAP.coinmWSAPI
           ? WS_KEY_MAP.coinm
           : WS_KEY_MAP.coinmTestnet,
       );
-
-      return;
     }
 
     if (keyType === 'Ed25519') {

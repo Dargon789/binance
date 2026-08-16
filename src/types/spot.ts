@@ -37,7 +37,8 @@ export type SymbolStatus =
   | 'END_OF_DAY'
   | 'HALT'
   | 'AUCTION_MATCH'
-  | 'BREAK';
+  | 'BREAK'
+  | 'CANCEL_ONLY';
 
 export interface SystemStatusResponse {
   status: 0 | 1;
@@ -316,6 +317,41 @@ export interface ConvertDustParams {
   accountType?: 'SPOT' | 'MARGIN';
 }
 
+export type DustConvertAccountType = 'SPOT' | 'MARGIN';
+
+export interface DustConvertParams {
+  asset: string[];
+  accountType?: DustConvertAccountType;
+  clientId?: string;
+  targetAsset?: string;
+  thirdPartyClientId?: string;
+  dustQuotaAssetToTargetAssetPrice?: numberInString;
+}
+
+export interface DustConvertibleAssetsParams {
+  targetAsset: string;
+  accountType?: DustConvertAccountType;
+  dustQuotaAssetToTargetAssetPrice?: numberInString;
+}
+
+export interface DustConvertibleAssetDetail {
+  asset: string;
+  assetFullName: string;
+  amountFree: numberInString;
+  exchange: numberInString;
+  toQuotaAssetAmount: numberInString;
+  toTargetAssetAmount: numberInString;
+  toTargetAssetOffExchange: numberInString;
+}
+
+export interface DustConvertibleAssetsResponse {
+  dribbletPercentage: numberInString;
+  totalTransferQuotaAssetAmount: numberInString;
+  totalTransferTargetAssetAmount: numberInString;
+  dribbletBase: numberInString;
+  details: DustConvertibleAssetDetail[];
+}
+
 export interface DustInfoDetail {
   asset: string;
   assetFullName: string;
@@ -585,6 +621,21 @@ export interface RawTrade {
   isBestMatch: boolean;
 }
 
+export interface BlockTrade {
+  id: number;
+  price: numberInString;
+  qty: numberInString;
+  quoteQty: numberInString;
+  time: number;
+  isBuyerMaker: boolean;
+}
+
+export interface HistoricalBlockTradesParams {
+  symbol: string;
+  fromId: number;
+  limit?: number;
+}
+
 export interface RawAccountTrade {
   symbol: string;
   id: number;
@@ -617,6 +668,68 @@ export interface CurrentAvgPrice {
   price: numberInString;
   closeTime: number;
 }
+
+/** Spot PRICE_RANGE execution rule (GET /api/v3/executionRules). */
+export interface SpotPriceRangeExecutionRule {
+  ruleType: 'PRICE_RANGE';
+  bidLimitMultUp: numberInString;
+  bidLimitMultDown: numberInString;
+  askLimitMultUp: numberInString;
+  askLimitMultDown: numberInString;
+}
+
+export interface SpotSymbolExecutionRules {
+  symbol: string;
+  rules: SpotPriceRangeExecutionRule[];
+}
+
+export interface SpotExecutionRulesResponse {
+  symbolRules: SpotSymbolExecutionRules[];
+}
+
+/** GET /api/v3/executionRules — only one of symbol, symbols, or symbolStatus per request. */
+export interface SpotExecutionRulesParams {
+  symbol?: string;
+  symbols?: string[];
+  symbolStatus?: 'TRADING' | 'HALT' | 'BREAK';
+}
+
+/** Successful GET /api/v3/referencePrice (referencePrice null = not currently set). */
+export interface SpotReferencePriceResponse {
+  symbol: string;
+  referencePrice: numberInString | null;
+  timestamp: number;
+}
+
+/** GET /api/v3/referencePrice or /referencePrice/calculation when no reference price has ever been set (code -2043). */
+export interface SpotReferencePriceNeverSetError {
+  code: -2043;
+  msg: string;
+}
+
+export type SpotReferencePriceResult =
+  | SpotReferencePriceResponse
+  | SpotReferencePriceNeverSetError;
+
+/** Reference price is computed as an arithmetic mean in the matching engine. */
+export interface SpotReferencePriceCalculationArithmeticMean {
+  symbol: string;
+  calculationType: 'ARITHMETIC_MEAN';
+  bucketCount: number;
+  bucketWidthMs: number;
+}
+
+/** Reference price is computed outside the matching engine. */
+export interface SpotReferencePriceCalculationExternal {
+  symbol: string;
+  calculationType: 'EXTERNAL';
+  externalCalculationId: number;
+}
+
+export type SpotReferencePriceCalculationResponse =
+  | SpotReferencePriceCalculationArithmeticMean
+  | SpotReferencePriceCalculationExternal
+  | SpotReferencePriceNeverSetError;
 
 export interface DailyChangeStatistic {
   symbol: string;
@@ -674,6 +787,8 @@ export interface OrderResponseResult {
   side: OrderSide;
   workingTime: number;
   selfTradePreventionMode: SelfTradePreventionMode;
+  /** Present with newOrderRespType RESULT or FULL when the order has an expiry reason. */
+  expiryReason?: string;
 }
 
 export interface OrderFill {
@@ -702,6 +817,8 @@ export interface OrderResponseFull {
   isIsolated?: boolean;
   workingTime: number;
   selfTradePreventionMode: SelfTradePreventionMode;
+  /** Present with newOrderRespType RESULT or FULL when the order has an expiry reason. */
+  expiryReason?: string;
   fills: OrderFill[];
 }
 
@@ -727,6 +844,8 @@ export interface OrderListOrder {
   symbol: string;
   orderId: number;
   clientOrderId: string;
+  /** Present only for expired orders. */
+  expiryReason?: string;
 }
 
 export interface OrderListResponse<RT extends OrderResponseType = 'ACK'> {
@@ -887,6 +1006,8 @@ export interface SpotOrder {
   isWorking: boolean;
   origQuoteOrderQty: numberInString;
   selfTradePreventionMode: SelfTradePreventionMode;
+  /** Present only for expired orders. */
+  expiryReason?: string;
 }
 
 export interface SpotAmendKeepPriorityResult {
@@ -2072,6 +2193,17 @@ export interface UserAsset {
   withdrawing: string;
   ipoable: string;
   btcValuation: string;
+}
+
+export interface SpotAssetTagsParams {
+  tag?: string;
+}
+
+export interface SpotAssetTag {
+  assetCode: string;
+  assetName: string;
+  trading: boolean;
+  tags: string[];
 }
 
 export interface ConvertTransfer {
@@ -3405,6 +3537,7 @@ export interface DualInvestmentPosition {
   isExercised?: boolean;
   settleAsset?: string;
   settleAmount?: string;
+  subscriptionTime?: number;
 }
 
 export interface CheckDualInvestmentAccountsResponse {
@@ -3833,6 +3966,245 @@ export interface GetWbethRewardsHistoryResponse {
   estRewardsInETH: string;
   rows: WbethRewardsHistory[];
   total: number;
+}
+
+/**
+ * BFUSD (sapi/v1/bfusd/*)
+ */
+
+export interface BfusdAccountResponse {
+  bfusdAmount: string;
+  usdtProfit: string;
+  bfusdProfit: string;
+}
+
+export interface BfusdSubscriptionQuota {
+  leftQuota: string;
+}
+
+export interface BfusdFastRedemptionQuota {
+  leftQuota: string;
+  minimum: string;
+  fee: string;
+  freeQuota: string;
+}
+
+export interface BfusdStandardRedemptionQuota {
+  leftQuota: string;
+  minimum: string;
+  fee: string;
+  redeemPeriod: number;
+}
+
+export interface BfusdQuotaResponse {
+  subscriptionQuota: BfusdSubscriptionQuota;
+  fastRedemptionQuota: BfusdFastRedemptionQuota;
+  standardRedemptionQuota: BfusdStandardRedemptionQuota;
+}
+
+export interface BfusdSubscribeParams {
+  asset: string;
+  amount: number;
+}
+
+export interface BfusdSubscribeResponse {
+  success: boolean;
+  bfusdAmount: string;
+}
+
+export interface BfusdRedeemParams {
+  amount: number;
+  type?: 'FAST' | 'STANDARD';
+}
+
+export interface BfusdRedeemResponse {
+  success: boolean;
+  receiveAmount: string;
+  fee: string;
+  arrivalTime: number;
+}
+
+export interface GetBfusdSubscriptionHistoryParams {
+  asset?: string;
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface BfusdSubscriptionHistoryRow {
+  time: number;
+  asset: string;
+  amount: string;
+  receiveAsset: string;
+  receiveAmount: string;
+  status: 'PENDING' | 'SUCCESS';
+}
+
+export interface GetBfusdRedemptionHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface BfusdRedemptionHistoryRow {
+  time: number;
+  asset: string;
+  amount: string;
+  receiveAsset: string;
+  receiveAmount: string;
+  fee: string;
+  arrivalTime: number;
+  status: 'PENDING' | 'SUCCESS';
+}
+
+export interface GetBfusdRewardsHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface BfusdRewardsHistoryRow {
+  time: number;
+  rewardsAmount: string;
+  annualPercentageRate: string;
+  rewardAsset?: string;
+  /** API may return this casing per Binance docs. */
+  BFUSDPosition?: string;
+}
+
+export interface GetBfusdRateHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface BfusdRateHistoryRow {
+  annualPercentageRate: string;
+  time: number;
+}
+
+/**
+ * RWUSD (sapi/v1/rwusd/*)
+ */
+
+export interface RwusdAccountResponse {
+  rwusdAmount: string;
+  totalProfit: string;
+}
+
+export interface RwusdSubscriptionQuota {
+  assets: string[];
+  leftQuota: string;
+  minimum: string;
+}
+
+export interface RwusdFastRedemptionQuota {
+  leftQuota: string;
+  minimum: string;
+  fee: string;
+  freeQuota: string;
+}
+
+export interface RwusdStandardRedemptionQuota {
+  leftQuota: string;
+  minimum: string;
+  fee: string;
+  redeemPeriod: number;
+}
+
+export interface RwusdQuotaResponse {
+  subscriptionQuota: RwusdSubscriptionQuota;
+  fastRedemptionQuota: RwusdFastRedemptionQuota;
+  standardRedemptionQuota: RwusdStandardRedemptionQuota;
+  subscribeEnable: boolean;
+  redeemEnable: boolean;
+}
+
+export interface RwusdSubscribeParams {
+  asset: string;
+  amount: number;
+}
+
+export interface RwusdSubscribeResponse {
+  success: boolean;
+  rwusdAmount: string;
+}
+
+export interface RwusdRedeemParams {
+  amount: number;
+  type?: 'FAST' | 'STANDARD';
+}
+
+export interface RwusdRedeemResponse {
+  success: boolean;
+  receiveAmount: string;
+  fee: string;
+  arrivalTime: number;
+}
+
+export interface GetRwusdSubscriptionHistoryParams {
+  asset?: string;
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface RwusdSubscriptionHistoryRow {
+  time: number;
+  asset: string;
+  amount: string;
+  receiveAsset: string;
+  receiveAmount: string;
+  status: 'PENDING' | 'SUCCESS';
+}
+
+export interface GetRwusdRedemptionHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface RwusdRedemptionHistoryRow {
+  time: number;
+  asset: string;
+  amount: string;
+  receiveAsset: string;
+  receiveAmount: string;
+  fee: string;
+  arrivalTime: number;
+  status: 'PENDING' | 'SUCCESS';
+}
+
+export interface GetRwusdRewardsHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface RwusdRewardsHistoryRow {
+  time: number;
+  rewardsAmount: string;
+  rwusdPosition: string;
+  annualPercentageRate: string;
+}
+
+export interface GetRwusdRateHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface RwusdRateHistoryRow {
+  annualPercentageRate: string;
+  time: number;
 }
 
 export interface GetMiningAlgoListResponse {
@@ -4336,6 +4708,14 @@ export interface GetPortfolioMarginProAccountInfoResponse {
   accountType: string;
 }
 
+export interface PortfolioDeltaModeStatus {
+  deltaEnabled: boolean;
+}
+
+export interface SwitchPortfolioDeltaModeParams {
+  deltaEnabled: 'true' | 'false';
+}
+
 export interface GetPortfolioMarginProCollateralRateResponse {
   asset: string;
   collateralRate: string;
@@ -4375,6 +4755,22 @@ export interface BnbTransferParams {
 export interface GetPortfolioMarginAssetLeverageResponse {
   asset: string;
   leverage: number;
+}
+
+export interface SetPortfolioMarginMarginCallLevelParams {
+  marginCallLevel: number;
+}
+
+export interface PortfolioMarginMarginCallLevelResponse {
+  marginCallLevel: string;
+}
+
+export type PortfolioMarginMarginCallLevelGetResponse =
+  | PortfolioMarginMarginCallLevelResponse
+  | Record<string, never>;
+
+export interface PortfolioMarginMarginCallLevelDeleteResponse {
+  msg: string;
 }
 
 export interface SubscribeBlvtParams {
@@ -5744,6 +6140,48 @@ export interface SpecialLowLatencyKeyInfo {
   type: 'HMAC_SHA256' | 'RSA' | 'Ed25519';
 }
 
+export interface MarginLiquidationLoan {
+  asset: string;
+  amount: string;
+  repaidAmount: string;
+  remainingAmount: string;
+}
+
+export interface RepayMarginLiquidationLoanParams {
+  asset: string;
+  amount: string;
+}
+
+export type MarginLiquidationLoanRepayStatus = 'SUCCESS' | 'PENDING';
+
+export interface MarginLiquidationLoanRepayResponse {
+  repayId: number;
+  asset: string;
+  amount: string;
+  status: MarginLiquidationLoanRepayStatus;
+  createTime: number;
+}
+
+export interface GetMarginLiquidationLoanRepayHistoryParams {
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface MarginLiquidationLoanRepayHistoryRecord {
+  repayId: number;
+  asset: string;
+  amount: string;
+  status: MarginLiquidationLoanRepayStatus;
+  createTime: number;
+}
+
+export interface MarginLiquidationLoanRepayHistoryResponse {
+  total: number;
+  rows: MarginLiquidationLoanRepayHistoryRecord[];
+}
+
 export interface SolStakingAccount {
   bnsolAmount: string; // Amount in bNSOL
   holdingInSOL: string; // Holding in SOL
@@ -6080,6 +6518,78 @@ export interface VASPInfo {
   identifier?: string;
 }
 
+export interface TravelRuleCountryInfo {
+  countryCode: string;
+  countryName: string;
+  blockType: 'supported' | 'limited' | 'blocked';
+  depositAllowed: boolean;
+  withdrawalAllowed: boolean;
+  hasRegionRestrictions: boolean;
+}
+
+export interface TravelRuleCountryListResponse {
+  countries: TravelRuleCountryInfo[];
+  lastUpdated: number;
+}
+
+export interface GetTravelRuleRegionListParams {
+  countryCode: string;
+}
+
+export interface TravelRuleRegionInfo {
+  regionName: string;
+  blockType: 'supported' | 'limited' | 'blocked';
+  depositAllowed: boolean;
+  withdrawalAllowed: boolean;
+}
+
+export interface TravelRuleRegionListResponse {
+  countryCode: string;
+  regions: TravelRuleRegionInfo[];
+  lastUpdated: number;
+}
+
+export interface GetVipLoanFixedRateMarketParams {
+  loanCoin: string;
+  duration?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface VipLoanFixedRateMarketRecord {
+  requestId: number;
+  requestNo: number;
+  coin: string;
+  interestRate: numberInString;
+  duration: number;
+  minimumAmount: numberInString;
+  availableAmount: numberInString;
+  estimatedInterest: numberInString;
+}
+
+export interface VipLoanFixedRateBorrowParams {
+  supplyRequest: string;
+  borrowCoin: string;
+  loanTerm: number;
+  borrowUid: number;
+  collateralCoin: string;
+  collateralAccountId: string;
+  autoRepay?: boolean;
+}
+
+export interface VipLoanFixedRateBorrowResponse {
+  borrowCoin: string;
+  borrowAmount: numberInString;
+  actualReceivedAmount: numberInString;
+  collateralCoin: string;
+  collateralAccountId: string;
+  borrowInterestRate: numberInString;
+  duration: string;
+  autoRepay: boolean;
+  orderId: number;
+  status: 'Succeeds' | 'Failed' | 'Processing';
+}
+
 // Institutional Loan types
 export interface InstitutionalLoanLiability {
   assetName: string;
@@ -6208,6 +6718,15 @@ export interface InstitutionalLoanRiskUnitTransferParams {
 }
 
 // Additional institutional loan types for borrow, repay, and interest history
+export interface GetInstitutionalLoanMaxBorrowableParams {
+  groupId?: number;
+  assetName: string;
+}
+
+export interface InstitutionalLoanMaxBorrowableResponse {
+  maxBorrowableAmount: numberInString | null;
+}
+
 export interface InstitutionalLoanBorrowParams {
   groupId: number;
   assetName: string;
@@ -6280,6 +6799,37 @@ export interface InstitutionalLoanBorrowRepayRecord {
 export interface GetInstitutionalLoanBorrowRepayRecordsResponse {
   total: number;
   rows: InstitutionalLoanBorrowRepayRecord[];
+}
+
+export interface MarginInterestRebateBalanceResponse {
+  asset: string;
+  balance: string;
+  totalGranted: string;
+  totalConsumed: string;
+}
+
+export interface GetMarginInterestRebateBalanceRecordsParams {
+  type?: 0 | 1 | 2;
+  startTime?: number;
+  endTime?: number;
+  current?: number;
+  size?: number;
+}
+
+export interface MarginInterestRebateBalanceRecord {
+  type: 'ADD' | 'DEDUCT' | 'INTEREST_OFFSET';
+  rebateAsset: string;
+  delta: string;
+  createTime: number;
+  groupId?: number;
+  liabilityAsset?: string;
+  deductedInterest?: string;
+  exchangeRate?: string;
+}
+
+export interface MarginInterestRebateBalanceRecordsResponse {
+  total: number;
+  rows: MarginInterestRebateBalanceRecord[];
 }
 
 // On-chain Yields types
@@ -6624,6 +7174,30 @@ export type AlphaKline = [
 
 export interface AlphaTickerParams {
   symbol: string;
+}
+
+export type AlphaFullDepthLimit = 5 | 10 | 20 | 50 | 100 | 500 | 1000;
+
+export interface AlphaFullDepthParams {
+  symbol: string;
+  limit?: AlphaFullDepthLimit;
+}
+
+export interface AlphaFullDepthData {
+  lastUpdateId: number;
+  symbol: string;
+  bids: [string, string][];
+  asks: [string, string][];
+  E: number;
+  T: number;
+}
+
+export interface AlphaFullDepthResponse {
+  code: string;
+  message: string | null;
+  messageDetail: string | null;
+  success: boolean;
+  data: AlphaFullDepthData;
 }
 
 export interface AlphaTicker {

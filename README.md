@@ -1,19 +1,20 @@
 # Node.js & JavaScript SDK for Binance REST APIs & WebSockets
 
-[![Build & Test](https://github.com/tiagosiebler/binance/actions/workflows/test.yml/badge.svg)](https://github.com/tiagosiebler/binance/actions/workflows/test.yml)
+[![Build & Test](https://github.com/sieblyio/binance/actions/workflows/test.yml/badge.svg)](https://github.com/sieblyio/binance/actions/workflows/test.yml)
 [![npm version](https://img.shields.io/npm/v/binance)][1]
 [![npm size](https://img.shields.io/bundlephobia/min/binance/latest)][1]
-[![users count](https://dependents.info/tiagosiebler/binance/badge?label=users)](https://dependents.info/tiagosiebler/binance)
+[![users count](https://dependents.info/sieblyio/binance/badge?label=users)](https://dependents.info/sieblyio/binance)
 [![npm downloads](https://img.shields.io/npm/dt/binance)][1]
-[![last commit](https://img.shields.io/github/last-commit/tiagosiebler/binance)][1]
-[![CodeFactor](https://www.codefactor.io/repository/github/tiagosiebler/binance/badge)](https://www.codefactor.io/repository/github/tiagosiebler/binance)
+[![last commit](https://img.shields.io/github/last-commit/sieblyio/binance)][1]
+[![CodeFactor](https://www.codefactor.io/repository/github/sieblyio/binance/badge)](https://www.codefactor.io/repository/github/sieblyio/binance)
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/nodetraders)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sieblyio/binance)
 
 <p align="center">
   <a href="https://www.npmjs.com/package/binance">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/tiagosiebler/binance/blob/master/docs/images/logoDarkMode2.svg?raw=true#gh-dark-mode-only">
-      <img alt="SDK Logo" src="https://github.com/tiagosiebler/binance/blob/master/docs/images/logoBrightMode2.svg?raw=true#gh-light-mode-only">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/sieblyio/binance/blob/master/docs/images/logoDarkMode2.svg?raw=true#gh-dark-mode-only">
+      <img alt="SDK Logo" src="https://github.com/sieblyio/binance/blob/master/docs/images/logoBrightMode2.svg?raw=true#gh-light-mode-only">
     </picture>
   </a>
 </p>
@@ -21,7 +22,7 @@
 [1]: https://www.npmjs.com/package/binance
 
 > [!TIP]
-> Upcoming change: As part of the [Siebly.io](https://siebly.io/) brand, this SDK will soon be hosted under the [Siebly.io GitHub organisation](https://github.com/sieblyio). The migration is seamless and requires no user changes.
+> Upcoming change: As part of the [Siebly.io](https://siebly.io/) brand, this SDK is now hosted under our [Siebly.io GitHub organisation](https://github.com/sieblyio). The migration is seamless and requires no user changes.
 
 Updated & performant JavaScript & Node.js SDK for the Binance REST APIs and WebSockets:
 
@@ -55,7 +56,8 @@ Updated & performant JavaScript & Node.js SDK for the Binance REST APIs and WebS
   - Real API calls in e2e tests.
 - Proxy support via axios integration.
 - Active community support & collaboration in telegram: [Node.js Algo Traders](https://t.me/nodetraders).
-- QuickStart Guide: https://siebly.io/sdk/binance/javascript
+- QuickStart Guide: [Binance JavaScript QuickStart Guide](https://siebly.io/sdk/binance/javascript)
+- Binance JavaScript Tutorial: [Binance JavaScript REST API & WebSocket Tutorial](https://siebly.io/sdk/binance/javascript/tutorial)
 
 ## Table of Contents
 
@@ -100,7 +102,7 @@ Refer to the [examples](./examples) folder for implementation demos.
 
 ## Issues & Discussion
 
-- Issues? Check the [issues tab](https://github.com/tiagosiebler/binance/issues).
+- Issues? Check the [issues tab](https://github.com/sieblyio/binance/issues).
 - Discuss & collaborate with other node devs? Join our [Node.js Algo Traders](https://t.me/nodetraders) engineering community on telegram.
 - Questions about Binance APIs & WebSockets? Ask in the official [Binance API](https://t.me/binance_api_english) group on telegram.
 - Follow our announcement channel for real-time updates on [X/Twitter](https://x.com/sieblyio)
@@ -109,23 +111,24 @@ Refer to the [examples](./examples) folder for implementation demos.
 
 ## Related Projects
 
-Check out my related JavaScript/TypeScript/Node.js projects:
+Check out our JavaScript/TypeScript/Node.js SDKs & Projects:
 
+- Visit our website: [https://Siebly.io](https://siebly.io/)
 - Try our REST API & WebSocket SDKs published on npmjs:
-  - [Bybit Node.js SDK: bybit-api](https://www.npmjs.com/package/bybit-api)
-  - [Kraken Node.js SDK: @siebly/kraken-api](https://www.npmjs.com/package/coinbase-api)
-  - [OKX Node.js SDK: okx-api](https://www.npmjs.com/package/okx-api)
-  - [Binance Node.js SDK: binance](https://www.npmjs.com/package/binance)
-  - [Gate (gate.com) Node.js SDK: gateio-api](https://www.npmjs.com/package/gateio-api)
-  - [Bitget Node.js SDK: bitget-api](https://www.npmjs.com/package/bitget-api)
-  - [Kucoin Node.js SDK: kucoin-api](https://www.npmjs.com/package/kucoin-api)
-  - [Coinbase Node.js SDK: coinbase-api](https://www.npmjs.com/package/coinbase-api)
-  - [Bitmart Node.js SDK: bitmart-api](https://www.npmjs.com/package/bitmart-api)
+  - [Bybit JavaScript SDK: bybit-api](https://www.npmjs.com/package/bybit-api)
+  - [Kraken JavaScript SDK: @siebly/kraken-api](https://www.npmjs.com/package/@siebly/kraken-api)
+  - [OKX JavaScript SDK: okx-api](https://www.npmjs.com/package/okx-api)
+  - [Binance JavaScript SDK: binance](https://www.npmjs.com/package/binance)
+  - [Gate (gate.com) JavaScript SDK: gateio-api](https://www.npmjs.com/package/gateio-api)
+  - [Bitget JavaScript SDK: bitget-api](https://www.npmjs.com/package/bitget-api)
+  - [Kucoin JavaScript SDK: kucoin-api](https://www.npmjs.com/package/kucoin-api)
+  - [Coinbase JavaScript SDK: coinbase-api](https://www.npmjs.com/package/coinbase-api)
+  - [HTX JavaScript SDK: @siebly/htx-api](https://www.npmjs.com/package/@siebly/htx-api)
 - Try my misc utilities:
   - [OrderBooks Node.js: orderbooks](https://www.npmjs.com/package/orderbooks)
   - [Crypto Exchange Account State Cache: accountstate](https://www.npmjs.com/package/accountstate)
 - Check out my examples:
-  - [awesome-crypto-examples Node.js](https://github.com/tiagosiebler/awesome-crypto-examples)
+  - [awesome-crypto-examples Node.js](https://github.com/sieblyio/awesome-crypto-examples)
   <!-- template_related_projects_end -->
 
 ## Documentation
@@ -203,7 +206,7 @@ The MainClient covers all endpoints under the main "api\*.binance.com" subdomain
 
 Refer to the following links for a complete list of available endpoints:
 
-- [Binance Node.js & JavaScript SDK Endpoint Map](https://github.com/tiagosiebler/binance/blob/master/docs/endpointFunctionList.md)
+- [Binance Node.js & JavaScript SDK Endpoint Map](https://github.com/sieblyio/binance/blob/master/docs/endpointFunctionList.md)
 - [Binance Spot API Docs](https://developers.binance.com/docs/binance-spot-api-docs/rest-api/general-endpoints)
 
 Start by importing the `MainClient` class. API credentials are optional, unless you plan on making private API calls. More Node.js & JavaScript examples for Binance's REST APIs & WebSockets can be found in the [examples](./examples) folder on GitHub.
@@ -472,7 +475,7 @@ wsClient.subscribe(
     'btcusdt@depth',
   ],
   // Look at the `WS_KEY_URL_MAP` for a list of values here:
-  // https://github.com/tiagosiebler/binance/blob/master/src/util/websockets/websocket-util.ts
+  // https://github.com/sieblyio/binance/blob/master/src/util/websockets/websocket-util.ts
   // "main" connects to wss://stream.binance.com:9443/stream
   // https://developers.binance.com/docs/binance-spot-api-docs/web-socket-streams
   'main',
@@ -504,7 +507,7 @@ import { WebsocketClient } from 'binance';
 
 /**
  * ETHUSDT in futures can have unusually large orderId values, sent as numbers. See this thread for more details:
- * https://github.com/tiagosiebler/binance/issues/208
+ * https://github.com/sieblyio/binance/issues/208
  *
  * If this is a problem for you, you can set a custom JSON parsing alternative using the customParseJSONFn hook injected into the WebsocketClient's constructor, as below:
  */
@@ -823,7 +826,7 @@ Have my projects helped you? Share the love, there are many ways you can show yo
 - Sign up with my referral links:
   - OKX (receive a 20% fee discount!): https://www.okx.com/join/42013004
   - Binance (receive a 20% fee discount!): https://accounts.binance.com/register?ref=OKFFGIJJ
-  - HyperLiquid (receive a 4% fee discount!): https://app.hyperliquid.xyz/join/SDK
+  - HyperLiquid (receive a 4% fee discount!): https://app.hyperliquid.xyz/join/SIEBLY
   - Gate: https://www.gate.io/signup/NODESDKS?ref_type=103
 
 <!---
@@ -843,12 +846,12 @@ Contributions are encouraged, I will review any incoming pull requests. See the 
 
 ## Used By
 
-[![Repository Users Preview Image](https://dependents.info/tiagosiebler/binance/image)](https://github.com/tiagosiebler/binance/network/dependents)
+[![Repository Users Preview Image](https://dependents.info/sieblyio/binance/image)](https://github.com/sieblyio/binance/network/dependents)
 
 <!-- template_star_history -->
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tiagosiebler/bybit-api,tiagosiebler/okx-api,tiagosiebler/binance,tiagosiebler/bitget-api,tiagosiebler/bitmart-api,tiagosiebler/gateio-api,tiagosiebler/kucoin-api,tiagosiebler/coinbase-api,tiagosiebler/orderbooks,tiagosiebler/accountstate,tiagosiebler/awesome-crypto-examples&type=Date)](https://star-history.com/#tiagosiebler/bybit-api&tiagosiebler/okx-api&tiagosiebler/binance&tiagosiebler/bitget-api&tiagosiebler/bitmart-api&tiagosiebler/gateio-api&tiagosiebler/kucoin-api&tiagosiebler/coinbase-api&tiagosiebler/orderbooks&tiagosiebler/accountstate&tiagosiebler/awesome-crypto-examples&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=sieblyio/bybit-api,sieblyio/okx-api,sieblyio/binance,sieblyio/bitget-api,sieblyio/bitmart-api,sieblyio/gateio-api,sieblyio/kucoin-api,sieblyio/coinbase-api,sieblyio/orderbooks,sieblyio/accountstate,sieblyio/awesome-crypto-examples&type=Date)](https://star-history.com/#sieblyio/bybit-api&sieblyio/okx-api&sieblyio/binance&sieblyio/bitget-api&sieblyio/bitmart-api&sieblyio/gateio-api&sieblyio/kucoin-api&sieblyio/coinbase-api&sieblyio/orderbooks&sieblyio/accountstate&sieblyio/awesome-crypto-examples&Date)
 
 <!-- template_star_history_end -->

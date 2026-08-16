@@ -1,6 +1,5 @@
 import {
   BooleanString,
-  BooleanStringCapitalised,
   ExchangeFilter,
   KlineInterval,
   numberInString,
@@ -134,7 +133,7 @@ export interface NewFuturesOrderParams<numberType = number> {
   activationPrice?: numberType;
   callbackRate?: numberType;
   workingType?: WorkingType;
-  priceProtect?: BooleanStringCapitalised;
+  priceProtect?: BooleanString;
   newOrderRespType?: 'ACK' | 'RESULT';
   selfTradePreventionMode?: SelfTradePreventionMode;
   priceMatch?: PriceMatchMode;
@@ -149,6 +148,7 @@ export interface ModifyFuturesOrderParams<numberType = number> {
   quantity?: numberType;
   price?: numberType;
   priceMatch?: PriceMatchMode;
+  modifyId?: number;
 }
 
 export enum EnumPositionMarginChangeType {
@@ -378,6 +378,7 @@ export interface FundingRateHistory {
   fundingRate: numberInString;
   fundingTime: number;
   markPrice: numberInString;
+  rateType?: 'Regular' | 'Special';
 }
 
 export interface FuturesSymbolOrderBookTicker {
@@ -480,6 +481,8 @@ export interface OrderResult {
   selfTradePreventionMode: SelfTradePreventionMode;
   priceMatch: PriceMatchMode;
   goodTillDate: number;
+  cumBase?: numberInString;
+  pair?: string;
 }
 
 export interface ModifyFuturesOrderResult {
@@ -507,6 +510,7 @@ export interface ModifyFuturesOrderResult {
   updateTime: number;
   selfTradePreventionMode: SelfTradePreventionMode;
   priceMatch: PriceMatchMode;
+  modifyId?: number;
 }
 
 export interface CancelFuturesOrderResult {
@@ -705,6 +709,9 @@ export interface FuturesPositionTrade {
   positionSide: PositionSide;
   symbol: string;
   time: number;
+  pair?: string;
+  baseQty?: numberInString;
+  marginAsset?: string;
 }
 
 export interface ForceOrderResult {
@@ -727,6 +734,9 @@ export interface ForceOrderResult {
   origType: FuturesOrderType;
   time: number;
   updateTime: number;
+  cumBase?: numberInString;
+  pair?: string;
+  goodTillDate?: number;
 }
 
 export interface SymbolLeverageBracket {
@@ -835,6 +845,7 @@ export interface OrderAmendment {
   clientOrderId: string;
   time: number;
   amendment: OrderAmendmentDetail;
+  modifyId?: number;
 }
 
 export interface QuarterlyContractSettlementPrice {
@@ -900,6 +911,7 @@ export interface ModifyOrderParams {
     | 'QUEUE_5'
     | 'QUEUE_10'
     | 'QUEUE_20';
+  modifyId?: number;
   recvWindow?: number;
   timestamp: number;
 }
@@ -1115,6 +1127,8 @@ export interface TradingSchedule {
   marketSchedules: {
     EQUITY?: MarketSchedule;
     COMMODITY?: MarketSchedule;
+    KR_EQUITY?: MarketSchedule;
+    HK_EQUITY?: MarketSchedule;
   };
 }
 

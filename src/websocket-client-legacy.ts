@@ -52,6 +52,12 @@ const wsBaseEndpoints: Record<WsMarket, string> = {
 
 type WsEventInternalSrc = 'event' | 'function';
 
+type WebSocketWithMetadata = WebSocket & {
+  onping?: (event: unknown) => void;
+  onpong?: (event: unknown) => void;
+  wsKey?: WsKey | string;
+};
+
 export declare interface WebsocketClientV1 {
   on(event: 'reply', listener: (event: WsResponse) => void): this;
 
@@ -73,7 +79,16 @@ export declare interface WebsocketClientV1 {
   ): this;
 
   on(
-    event: 'open' | 'reconnected' | 'reconnecting' | 'close',
+    event: 'open' | 'reconnected',
+    listener: (event: {
+      wsKey: WsKey;
+      ws: WebSocket.Event;
+      event?: any;
+    }) => void,
+  ): this;
+
+  on(
+    event: 'reconnecting' | 'close',
     listener: (event: { wsKey: WsKey; ws: WebSocket; event?: any }) => void,
   ): this;
 }
@@ -163,7 +178,7 @@ export class WebsocketClientV1 extends EventEmitter {
 
     const { protocols = [], ...wsOptions } = this.options.wsOptions || {};
 
-    const ws = new WebSocket(url, protocols, wsOptions);
+    const ws: WebSocketWithMetadata = new WebSocket(url, protocols, wsOptions);
     this.wsUrlKeyMap[url] = wsRefKey;
 
     if (typeof ws.on === 'function') {
@@ -250,7 +265,7 @@ export class WebsocketClientV1 extends EventEmitter {
     }
   }
 
-  private onWsOpen(ws: WebSocket, wsKey: WsKey | string, wsUrl: string) {
+  private onWsOpen(ws: WebSocket.Event, wsKey: WsKey | string, wsUrl: string) {
     this.logger.trace(`onWsOpen(): ${wsUrl} : ${wsKey}`);
     if (
       this.wsStore.isConnectionState(wsKey, WsConnectionStateEnum.RECONNECTING)
@@ -326,7 +341,7 @@ export class WebsocketClientV1 extends EventEmitter {
   }
 
   private onWsMessage(
-    event: MessageEvent,
+    event: WebSocket.MessageEvent,
     wsKey: WsKey | string,
     source: WsEventInternalSrc,
   ) {
@@ -526,7 +541,8 @@ export class WebsocketClientV1 extends EventEmitter {
   }
 
   public closeWs(ws: WebSocket, shouldReconnectAfterClose?: boolean) {
-    const wsKey = this.wsUrlKeyMap[ws.url] || ws?.wsKey;
+    const wsKey =
+      this.wsUrlKeyMap[ws.url] || (ws as WebSocketWithMetadata).wsKey;
     if (!wsKey) {
       throw new Error(
         'Cannot close websocket as it has no known wsKey attached.',
@@ -983,7 +999,7 @@ export class WebsocketClientV1 extends EventEmitter {
     }
   }
 
-  private teardownUserDataListenKey(listenKey: string, ws: WebSocket) {
+  private teardownUserDataListenKey(listenKey: string, ws?: WebSocket) {
     if (listenKey) {
       this.listenKeyStateCache.clearAllListenKeyState(listenKey);
       safeTerminateWs(ws, true);
@@ -1820,7 +1836,7 @@ export class WebsocketClientV1 extends EventEmitter {
   public async subscribeMarginUserDataStream(
     forceNewConnection?: boolean,
     isReconnecting?: boolean,
-  ): Promise<WebSocket> {
+  ): Promise<WebSocket | undefined> {
     try {
       const { listenKey } = await this.restClientCache
         .getSpotRestClient(
@@ -1880,7 +1896,7 @@ export class WebsocketClientV1 extends EventEmitter {
     symbol: string,
     forceNewConnection?: boolean,
     isReconnecting?: boolean,
-  ): Promise<WebSocket> {
+  ): Promise<WebSocket | undefined> {
     try {
       const lowerCaseSymbol = symbol.toLowerCase();
       const { listenKey } = await this.restClientCache
@@ -1951,7 +1967,7 @@ export class WebsocketClientV1 extends EventEmitter {
     isTestnet?: boolean,
     forceNewConnection?: boolean,
     isReconnecting?: boolean,
-  ): Promise<WebSocket> {
+  ): Promise<WebSocket | undefined> {
     try {
       const restClient = this.restClientCache.getUSDMRestClient(
         { ...this.getRestClientOptions(), testnet: isTestnet },
@@ -2018,7 +2034,7 @@ export class WebsocketClientV1 extends EventEmitter {
     isTestnet?: boolean,
     forceNewConnection?: boolean,
     isReconnecting?: boolean,
-  ): Promise<WebSocket> {
+  ): Promise<WebSocket | undefined> {
     try {
       const { listenKey } = await this.restClientCache
         .getCOINMRestClient(
